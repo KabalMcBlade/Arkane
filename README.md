@@ -40,7 +40,7 @@ The dependencies which I have manually imported (such VMem) if any Warning in co
 
 # Build Status
 
-|  Platform  | Platform | Build Status |
+|  Platform  | Architecture  | Build Status |
 |:----------:|:------:|:------------:|
 | Windows (Visual Studio 2019) | x86 | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kabalmcblade/arkane?platform=x86&svg=true)](https://ci.appveyor.com/project/kabalmcblade/arkane) |
 | Windows (Visual Studio 2019) | x64 | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kabalmcblade/arkane?platform=x64&svg=true)](https://ci.appveyor.com/project/kabalmcblade/arkane) |
