@@ -1,0 +1,9 @@
+[submodule "Arkane/Arkane/Dependencies/VulkanMemoryAllocator"]
+	path = Arkane/Arkane/Dependencies/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "Arkane/Arkane/Dependencies/glm"]
+	path = Arkane/Arkane/Dependencies/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "Arkane/Demo/Dependencies/glfw"]
+	path = Arkane/Demo/Dependencies/glfw
+	url = https://github.com/glfw/glfw.git
