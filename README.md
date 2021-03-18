@@ -11,7 +11,7 @@ I will work on this engine in order to let it be a proper engine and I'm writing
 
 ## Status
 
-**[x86, x64] Work in progress**
+**[x64] Work in progress**
 
 
 ## NOTE ABOUT DEPENDENCIES
