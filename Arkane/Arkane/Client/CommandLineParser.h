@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/BasicDefines.h"
+#include "../Core/Defines.h"
 
 #include <string>
 #include <algorithm>

@@ -168,7 +168,7 @@
     <ClInclude Include="Client\EngineApp.h" />
     <ClInclude Include="Client\FileSystem.h" />
     <ClInclude Include="Core\Assertions.h" />
-    <ClInclude Include="Core\BasicDefines.h" />
+    <ClInclude Include="Core\Defines.h" />
     <ClInclude Include="Core\VulkanAllocator.h" />
     <ClInclude Include="Dependencies\glm\glm\common.hpp" />
     <ClInclude Include="Dependencies\glm\glm\detail\compute_common.hpp" />
@@ -463,6 +463,7 @@
     <ClInclude Include="Dependencies\VMem\VMem.h" />
     <ClInclude Include="Dependencies\VulkanMemoryAllocator\src\vk_mem_alloc.h" />
     <ClInclude Include="Dependencies\VulkanMemoryAllocator\src\VmaUsage.h" />
+    <ClInclude Include="ECS\Types.h" />
     <ClInclude Include="Renderer\Device.h" />
     <ClInclude Include="Renderer\Instance.h" />
     <ClInclude Include="Renderer\QueueFamily.h" />

@@ -24,9 +24,6 @@
     <ClInclude Include="Arkane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\BasicDefines.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -922,6 +919,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\VMem\VMem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,7 +4,7 @@
 #include <vulkan/vulkan.h>
 
 
-#include "../Core/BasicDefines.h"
+#include "../Core/Defines.h"
 
 #include "../Renderer/QueueFamily.h"
 #include "../Renderer/Device.h"
