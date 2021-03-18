@@ -75,7 +75,9 @@ void OptionValueBool::SetDefault(bool _value)
 
 void OptionValueBool::Parse()
 {
-	m_value = (bool)stoi(m_stringValue);
+	std::transform(m_stringValue.begin(), m_stringValue.end(), m_stringValue.begin(), ::tolower);
+	std::istringstream is(m_stringValue);
+	is >> std::boolalpha >> m_value;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -332,6 +334,7 @@ bool CommandLineParser::GetValue(const std::string& _option, int32_t& _output) c
 			if (opt->GetType() == Option::Type::Integer)
 			{
 				OptionValueInteger* optInt = dynamic_cast<OptionValueInteger*>(opt);
+				optInt->Parse();
 				_output = optInt->GetValue();
 				return true;
 			}
@@ -363,6 +366,7 @@ bool CommandLineParser::GetValue(const std::string& _option, uint32_t& _output) 
 			if (opt->GetType() == Option::Type::Unsigned)
 			{
 				OptionValueUnsigned* optUns = dynamic_cast<OptionValueUnsigned*>(opt);
+				optUns->Parse();
 				_output = optUns->GetValue();
 				return true;
 			}
@@ -393,6 +397,7 @@ bool CommandLineParser::GetValue(const std::string& _option, float& _output) con
 			if (opt->GetType() == Option::Type::Float)
 			{
 				OptionValueFloat* optFlt = dynamic_cast<OptionValueFloat*>(opt);
+				optFlt->Parse();
 				_output = optFlt->GetValue();
 				return true;
 			}
@@ -423,6 +428,7 @@ bool CommandLineParser::GetValue(const std::string& _option, std::string& _outpu
 			if (opt->GetType() == Option::Type::Float)
 			{
 				OptionValueString* optStr = dynamic_cast<OptionValueString*>(opt);
+				optStr->Parse();
 				_output = optStr->GetValue();
 				return true;
 			}
@@ -454,6 +460,7 @@ bool CommandLineParser::GetValue(const std::string& _option, bool& _output) cons
 			if (opt->GetType() == Option::Type::Bool)
 			{
 				OptionValueBool* optBool = dynamic_cast<OptionValueBool*>(opt);
+				optBool->Parse();
 				_output = optBool->GetValue();
 				return true;
 			}
