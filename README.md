@@ -11,7 +11,7 @@ I will work on this engine in order to let it be a proper engine and I'm writing
 
 ## Status
 
-**[x86, x64] Work in progress**
+**Work in progress**
 
 
 ## NOTE ABOUT DEPENDENCIES
@@ -40,6 +40,7 @@ The dependencies which I have manually imported (such VMem) if any Warning in co
 
 # Build Status
 
-|  Platform  | Branch | Build Status |
+|  Platform  | Platform | Build Status |
 |:----------:|:------:|:------------:|
-| Windows (Visual Studio 2019) | Master | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kabalmcblade/arkane?svg=true)](https://ci.appveyor.com/project/kabalmcblade/arkane) |
+| Windows (Visual Studio 2019) | x86 | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kabalmcblade/arkane?platform=x86&svg=true)](https://ci.appveyor.com/project/kabalmcblade/arkane) |
+| Windows (Visual Studio 2019) | x64 | [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/kabalmcblade/arkane?platform=x64&svg=true)](https://ci.appveyor.com/project/kabalmcblade/arkane) |
