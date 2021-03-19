@@ -8,9 +8,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 // DEPENDENCIES
-//#define VMEM_OVERRIDE_NEW_DELETE
-//#include "Dependencies/VMem/VMem.h"
-//#include "Dependencies/VMem/VMem.cpp"
 #include "Dependencies/VulkanMemoryAllocator/src/VmaUsage.h"
 
 #define GLM_FORCE_RADIANS
@@ -24,6 +21,18 @@
 #include "Core/Defines.h"
 #include "Core/Assertions.h"
 #include "Core/VulkanAllocator.h"
+#include "Core/SmartPointers.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+// Utilities
+#include "Utilities/Hash.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+// Event
+#include "Events/Event.h"
+#include "Events/EventManager.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,7 +50,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 // ECS
-#include "ECS/Types.h"
+#include "ECS/Core/Types.h"
+#include "ECS/Systems/System.h"
+#include "ECS/Managers/SystemManager.h"
+#include "ECS/Managers/EntityManager.h"
 
 
 //////////////////////////////////////////////////////////////////////////

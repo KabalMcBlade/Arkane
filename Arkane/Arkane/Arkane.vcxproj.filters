@@ -921,10 +921,31 @@
     <ClInclude Include="Dependencies\VMem\VMem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\Types.h">
+    <ClInclude Include="Core\Defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Defines.h">
+    <ClInclude Include="ECS\Core\Types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\Event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\Hash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\EventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\SmartPointers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Systems\System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Managers\SystemManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\Managers\EntityManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -960,6 +981,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\VMem\VMem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Events\EventManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\Managers\SystemManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS\Managers\EntityManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

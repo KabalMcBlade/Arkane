@@ -12,10 +12,6 @@ static constexpr uint32_t kHeight = 768;
 
 int main(int argc, char** argv)
 {
-
-//     ExportClass* b = new ExportClass;
-//     delete b;
-
 	CommandLineParser* cmdLine = CommandLineParser::Create();
 	cmdLine->AddWithValueAndDefaultUnsigned("-width", false, kWidth);
 	cmdLine->AddWithValueAndDefaultUnsigned("-height", false, kHeight);
@@ -31,7 +27,7 @@ int main(int argc, char** argv)
 
 	FileSystem::Destroy(fileSystem);
 	CommandLineParser::Destroy(cmdLine);
-
+	
 	return 0;
 }
 

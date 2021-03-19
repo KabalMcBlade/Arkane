@@ -657,11 +657,11 @@ namespace VMem
 
 	// allocations
 
-	VMEM_RESTRICT_RETURN void* Alloc(size_t size, size_t alignment=VMEM_NATURAL_ALIGNMENT);
+	__declspec(dllexport) VMEM_RESTRICT_RETURN void* Alloc(size_t size, size_t alignment=VMEM_NATURAL_ALIGNMENT);
 
-	VMEM_RESTRICT_RETURN void* Realloc(void* p, size_t new_size, size_t alignment=VMEM_NATURAL_ALIGNMENT);
+	__declspec(dllexport) VMEM_RESTRICT_RETURN void* Realloc(void* p, size_t new_size, size_t alignment=VMEM_NATURAL_ALIGNMENT);
 
-	void Free(void* p);
+	__declspec(dllexport) void Free(void* p);
 
 	size_t GetSize(void* p);
 

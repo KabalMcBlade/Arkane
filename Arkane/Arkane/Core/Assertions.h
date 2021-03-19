@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <cassert>
 #include <assert.h>
 
 #include "Defines.h"
