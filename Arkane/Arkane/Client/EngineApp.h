@@ -6,9 +6,6 @@
 
 #include "../Core/Defines.h"
 
-#include "../Renderer/QueueFamily.h"
-#include "../Renderer/Device.h"
-#include "../Renderer/Instance.h"
 
 #include <memory>
 #include <string>
@@ -20,6 +17,9 @@ AK_NAMESPACE_BEGIN
 
 class CommandLineParser;
 class FileSystem;
+class Instance;
+class Device;
+class SwapChain;
 class AK_DLL EngineApp
 {
 public:
@@ -30,6 +30,10 @@ public:
 
 protected:
 	virtual const VkSurfaceKHR& GetSurafe() const = 0;
+	virtual uint32_t GetWidth() const = 0;
+	virtual uint32_t GetHeight() const = 0;
+	virtual int32_t GetFrameWidth() const = 0;
+	virtual int32_t GetFrameHeight() const = 0;
 
 protected:
 	virtual void InitWindow() {}
@@ -45,10 +49,11 @@ private:
 
 
 protected:
-	const CommandLineParser* m_commandLine;	// keep unique
-	const FileSystem* m_fileSystem;			// keep unique
-	Instance* m_instance;					// need to be shared with other
-	Device* m_device;						// need to be shared with other
+	const CommandLineParser* m_commandLine;
+	const FileSystem* m_fileSystem;
+	Instance* m_instance;
+	Device* m_device;
+	SwapChain* m_swapchain;
 	VkPhysicalDeviceFeatures m_enabledFeatures;
 	const char* m_name;
 	uint32_t m_version;

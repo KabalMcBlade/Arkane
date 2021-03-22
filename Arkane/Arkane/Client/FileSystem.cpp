@@ -93,19 +93,6 @@ std::string FileSystem::GetShaderTypeExt(const std::string& _path)
 
 //////////////////////////////////////////////////////////////////////////
 
-FileSystem* FileSystem::Create(const std::string& _mainPath,
-	const std::string& _shadersPath,
-	const std::string& _texturesPath,
-	const std::string& _modelsPath)
-{
-	return new FileSystem(_mainPath, _shadersPath, _texturesPath, _modelsPath);
-}
-
-void FileSystem::Destroy(FileSystem* _ptr)
-{
-	delete _ptr;
-}
-
 FileSystem::FileSystem(const std::string& _mainPath,
 	const std::string& _shadersPath,
 	const std::string& _texturesPath,

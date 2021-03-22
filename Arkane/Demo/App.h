@@ -24,11 +24,12 @@ public:
 
 	AK_INLINE const GLFWwindow& GetWindow() const { return *m_window; }
 
-	AK_INLINE int32_t GetFrameWidth() const { return m_frameWidth; }
-	AK_INLINE int32_t GetFrameHeight() const { return m_frameheight; }
 
-	AK_INLINE uint32_t GetWidth() const { return m_width; }
-	AK_INLINE uint32_t GetHeight() const { return m_height; }
+	virtual int32_t GetFrameWidth() const override { return m_frameWidth; }
+	virtual int32_t GetFrameHeight() const override { return m_frameheight; }
+
+	virtual uint32_t GetWidth() const override { return m_width; }
+	virtual uint32_t GetHeight() const override { return m_height; }
 
 	virtual const VkSurfaceKHR& GetSurafe() const override { return m_surface; }
 

@@ -3,12 +3,6 @@
 
 AK_NAMESPACE_BEGIN
 
-EntityManager& EntityManager::Instance()
-{
-	static EntityManager instance;
-	return instance;
-}
-
 EntityManager::EntityManager() : m_livingEntityCount(0)
 {
 	for (Entity entity = 0; entity < AK_ECS_MAX_ENTITIES; ++entity)
@@ -20,6 +14,8 @@ EntityManager::EntityManager() : m_livingEntityCount(0)
 Entity EntityManager::CreateEntity()
 {
 	akAssertReturnValue(m_livingEntityCount < AK_ECS_MAX_ENTITIES, InvalidEntity, "Too many entities in existence.");
+
+	const std::lock_guard<std::mutex> lock(m_mutex);
 
 	Entity id = m_availableEntities.front();
 	m_availableEntities.pop();
@@ -33,6 +29,8 @@ void EntityManager::DestroyEntity(Entity _entity)
 {
 	akAssertReturnVoid(_entity < AK_ECS_MAX_ENTITIES, "Entity out of range.");
 
+	const std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_signatures[_entity].reset();
 	m_availableEntities.push(_entity);
 
@@ -42,6 +40,8 @@ void EntityManager::DestroyEntity(Entity _entity)
 void EntityManager::SetSignature(Entity _entity, Signature _signature)
 {
 	akAssertReturnVoid(_entity < AK_ECS_MAX_ENTITIES, "Entity out of range.");
+
+	const std::lock_guard<std::mutex> lock(m_mutex);
 
 	m_signatures[_entity] = _signature;
 }

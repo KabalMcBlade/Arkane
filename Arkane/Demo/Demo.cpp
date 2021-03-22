@@ -4,29 +4,32 @@
 
 #include "App.h"
 
+#include <iostream>
+
 
 AK_USING_NAMESPACE
 
 static constexpr uint32_t kWidth = 1024;
 static constexpr uint32_t kHeight = 768;
 
+
 int main(int argc, char** argv)
 {
-	CommandLineParser* cmdLine = CommandLineParser::Create();
+	CommandLineParser* cmdLine = new CommandLineParser;
 	cmdLine->AddWithValueAndDefaultUnsigned("-width", false, kWidth);
 	cmdLine->AddWithValueAndDefaultUnsigned("-height", false, kHeight);
 	cmdLine->AddWithValueAndDefaultBool("-fullscreen", false, false);
 	cmdLine->AddWithValueAndDefaultBool("-showcursor", false, true);
 	cmdLine->Parse(argc, argv);
 
-	FileSystem* fileSystem = FileSystem::Create("Assets", "Shaders", "Textures", "Models");
+	FileSystem* fileSystem = new FileSystem("Assets", "Shaders", "Textures", "Models");
 
 	App demo("Test", VK_MAKE_VERSION(0, 0, 1), cmdLine, fileSystem);
 
 	demo.Execute();
 
-	FileSystem::Destroy(fileSystem);
-	CommandLineParser::Destroy(cmdLine);
+	delete fileSystem;
+	delete cmdLine;
 	
 	return 0;
 }

@@ -82,16 +82,6 @@ void OptionValueBool::Parse()
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CommandLineParser* CommandLineParser::Create()
-{
-	return new CommandLineParser;
-}
-
-void CommandLineParser::Destroy(CommandLineParser* _ptr)
-{
-	delete _ptr;
-}
-
 CommandLineParser::CommandLineParser() {}
 
 CommandLineParser::~CommandLineParser()

@@ -2,18 +2,13 @@
 
 AK_NAMESPACE_BEGIN
 
-SystemManager& SystemManager::Instance()
-{
-	static SystemManager instance;
-	return instance;
-}
-
 void SystemManager::EntityDestroyed(Entity _entity)
 {
 	for (auto const& pair : m_systems)
 	{
 		auto const& system = pair.second;
 
+		const std::lock_guard<std::mutex> lock(m_mutex);
 		system->m_entities.erase(_entity);
 	}
 }
@@ -25,6 +20,8 @@ void SystemManager::EntitySignatureChanged(Entity _entity, Signature _signature)
 		auto const& type = pair.first;
 		auto const& system = pair.second;
 		auto const& systemSignature = m_signatures[type];
+
+		const std::lock_guard<std::mutex> lock(m_mutex);
 
 		if ((_signature & systemSignature) == systemSignature)
 		{

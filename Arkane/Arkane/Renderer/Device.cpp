@@ -9,6 +9,7 @@
 
 #pragma warning(disable : 26812 26495)
 
+
 AK_NAMESPACE_BEGIN
 
 
@@ -92,6 +93,9 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 			vkGetDeviceQueue(m_device, m_queueFamily->GetPresentFamily(), 0, &m_computeQueue);
 
 			vkGetPhysicalDeviceProperties(m_physicalDevice, &m_physicalDeviceProperties);
+
+			// just get the first for now!
+			return;
 		}
 	}
 }

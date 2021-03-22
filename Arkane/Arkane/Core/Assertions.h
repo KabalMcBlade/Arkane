@@ -36,6 +36,6 @@
 #endif 
 
 
-
+#define akAssertInline(x)                                               assert(x);
 #define akAssertReturnVoid( condition, format, ... )					akAssertVoid( condition, format, __VA_ARGS__ )
 #define akAssertReturnValue( condition, return_value, format, ...  )	akAssertValue( condition, return_value, format, __VA_ARGS__ )

@@ -156,10 +156,9 @@ private:
 class AK_DLL CommandLineParser final
 {
 public:
-	static CommandLineParser* Create();
-	static void Destroy(CommandLineParser* _ptr);
+	CommandLineParser();
+	~CommandLineParser();
 
-public:
 	void Add(const std::string& _option, bool _mandatory = true);
 	void AddWithValueString(const std::string& _option, bool _mandatory = true);
 	void AddWithValueAndDefaultString(const std::string& _option, bool _mandatory = true, const char* _default = "");
@@ -186,10 +185,6 @@ public:
 	bool GetValue(const std::string& _option, float& _output) const;
 	bool GetValue(const std::string& _option, std::string& _output) const;
 	bool GetValue(const std::string& _option, bool& _output) const;
-
-private:
-	CommandLineParser();
-	~CommandLineParser();
 
 private:
 	std::map<std::string, Option*> m_options;

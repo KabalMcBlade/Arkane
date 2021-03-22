@@ -2,8 +2,14 @@
 
 #include "../Core/Assertions.h"
 
+#include "../Renderer/QueueFamily.h"
+#include "../Renderer/Device.h"
+#include "../Renderer/Instance.h"
+#include "../Renderer/SwapChain.h"
+
 #include "CommandLineParser.h"
 #include "FileSystem.h"
+
 
 AK_NAMESPACE_BEGIN
 
@@ -37,6 +43,7 @@ void EngineApp::InternalInitWindow()
 	InitWindow();
 
 	m_device = new Device(m_instance->GetInstance(), GetSurafe(), m_enabledFeatures);
+	m_swapchain = new SwapChain(*m_device, GetSurafe(), GetWidth(), GetHeight());
 }
 
 void EngineApp::InternalInitEngine()
@@ -51,9 +58,11 @@ void EngineApp::InternalMainLoop()
 
 void EngineApp::InternalCleanup()
 {
+	delete m_swapchain;	// need to be cleared before surface
+	delete m_device;
+
 	Cleanup();
 
-	delete m_device;
 	delete m_instance;
 }
 

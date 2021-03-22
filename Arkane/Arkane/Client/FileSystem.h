@@ -11,14 +11,6 @@ AK_NAMESPACE_BEGIN
 class AK_DLL FileSystem final
 {
 public:
-	static FileSystem* Create(const std::string& _mainPath,
-		const std::string& _shadersPath,
-		const std::string& _texturesPath,
-		const std::string& _modelsPath);
-
-	static void Destroy(FileSystem* _ptr);
-	
-public:
 	static void ConvertSlash(std::string& _path);
 	static std::string ConvertSlash(const std::string& _path);
 	static std::string GetFileName(const std::string& _path);
@@ -31,18 +23,16 @@ public:
 	static std::string GetShaderTypeExt(const std::string& _path);
 
 public:
-	const std::string& GetMainPath() const { return m_mainPath; }
-	const std::string& GetShadersPath() const { return m_shadersPath; }
-	const std::string& GetTexturesPath() const { return m_texturesPath; }
-	const std::string& GetModelsPath() const { return m_modelsPath; }
-
-
-private:
 	FileSystem(const std::string& _mainPath,
 		const std::string& _shadersPath,
 		const std::string& _texturesPath,
 		const std::string& _modelsPath);
 	~FileSystem();
+
+	const std::string& GetMainPath() const { return m_mainPath; }
+	const std::string& GetShadersPath() const { return m_shadersPath; }
+	const std::string& GetTexturesPath() const { return m_texturesPath; }
+	const std::string& GetModelsPath() const { return m_modelsPath; }
 
 private:
 	bool GetFullPath(const std::string& partialPath, std::string& _fullPath);

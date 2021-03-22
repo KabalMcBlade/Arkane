@@ -27,9 +27,9 @@ public:
 		return m_device;
 	}
 
-	AK_INLINE const QueueFamily* GetQueueFamily() const
+	AK_INLINE const QueueFamily& GetQueueFamily() const
 	{
-		return m_queueFamily;
+		return *m_queueFamily;
 	}
 
 	AK_INLINE const VkPhysicalDeviceProperties& GetPhysicalDeviceProperties() const

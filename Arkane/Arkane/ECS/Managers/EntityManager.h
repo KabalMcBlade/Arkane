@@ -7,6 +7,7 @@
 
 #include <array>
 #include <queue>
+#include <mutex>
 
 
 #pragma warning(disable : 4251)	// export for stl
@@ -16,8 +17,6 @@ AK_NAMESPACE_BEGIN
 class AK_DLL EntityManager final
 {
 public:
-	static EntityManager& Instance();
-
 	EntityManager();
 	Entity CreateEntity();
 	void DestroyEntity(Entity _entity);
@@ -27,6 +26,7 @@ public:
 private:
 	std::queue<Entity> m_availableEntities;
 	std::array<Signature, AK_ECS_MAX_ENTITIES> m_signatures;
+	std::mutex m_mutex;
 	uint32_t m_livingEntityCount;
 };
 

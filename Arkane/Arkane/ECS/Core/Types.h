@@ -13,8 +13,8 @@ using Entity = uint32_t;
 static constexpr Entity AK_ECS_MAX_ENTITIES = 100000;
 static constexpr Entity InvalidEntity = (Entity)-1;
 
-using Component = uint8_t;
-static constexpr  Component AK_ECS_MAX_COMPONENTS = static_cast<Component>(256);
+using ComponentType = uint8_t;
+static constexpr ComponentType AK_ECS_MAX_COMPONENTS = static_cast<ComponentType>(256);
 
 using Signature = std::bitset<AK_ECS_MAX_COMPONENTS>;
 
