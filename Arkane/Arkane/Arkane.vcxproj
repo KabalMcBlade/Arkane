@@ -488,7 +488,12 @@
     <ClInclude Include="Renderer\Device.h" />
     <ClInclude Include="Renderer\Instance.h" />
     <ClInclude Include="Renderer\QueueFamily.h" />
+    <ClInclude Include="Renderer\RenderPass.h" />
     <ClInclude Include="Renderer\SwapChain.h" />
+    <ClInclude Include="Renderer\VertexDescriptor.h" />
+    <ClInclude Include="Renderer\VertexLayout.h" />
+    <ClInclude Include="Shaders\Shader.h" />
+    <ClInclude Include="Shaders\ShaderManager.h" />
     <ClInclude Include="Utilities\Hash.h" />
   </ItemGroup>
   <ItemGroup>
@@ -507,7 +512,11 @@
     <ClCompile Include="Renderer\Device.cpp" />
     <ClCompile Include="Renderer\Instance.cpp" />
     <ClCompile Include="Renderer\QueueFamily.cpp" />
+    <ClCompile Include="Renderer\RenderPass.cpp" />
     <ClCompile Include="Renderer\SwapChain.cpp" />
+    <ClCompile Include="Renderer\VertexDescriptor.cpp" />
+    <ClCompile Include="Shaders\Shader.cpp" />
+    <ClCompile Include="Shaders\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\glm\glm\detail\func_common.inl" />
