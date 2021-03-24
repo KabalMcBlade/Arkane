@@ -102,10 +102,10 @@ bool SwapChain::CreateSwapChain()
 	createInfo.imageArrayLayers = 1; // 2 for VR or generic stereoscopic 
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-	const QueueFamily &indices = m_device->GetQueueFamily();
-	uint32_t queueFamilyIndices[] = { (uint32_t)indices.GetGraphicsFamily(), (uint32_t)indices.GetPresentFamily() };
+	SharedPtr<QueueFamily> indices = m_device->GetQueueFamily();
+	uint32_t queueFamilyIndices[] = { (uint32_t)indices->GetGraphicsFamily(), (uint32_t)indices->GetPresentFamily() };
 
-	if (indices.GetGraphicsFamily() != indices.GetPresentFamily())
+	if (indices->GetGraphicsFamily() != indices->GetPresentFamily())
 	{
 		createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
 		createInfo.queueFamilyIndexCount = 2;

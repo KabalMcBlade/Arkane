@@ -4,6 +4,8 @@
 #include <vulkan/vulkan.h>
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
+
 #include "QueueFamily.h"
 
 #include <memory>
@@ -27,9 +29,9 @@ public:
 		return m_device;
 	}
 
-	AK_INLINE const QueueFamily& GetQueueFamily() const
+	AK_INLINE SharedPtr<QueueFamily> GetQueueFamily() const
 	{
-		return *m_queueFamily;
+		return m_queueFamily;
 	}
 
 	AK_INLINE const VkPhysicalDeviceProperties& GetPhysicalDeviceProperties() const
@@ -54,7 +56,7 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_device;
 
-	QueueFamily* m_queueFamily;
+	SharedPtr<QueueFamily> m_queueFamily;
 
 	VkQueue m_graphicsQueue;
 	VkQueue m_presentQueue;

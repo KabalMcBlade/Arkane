@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 
 #pragma warning(disable:4251)
@@ -24,6 +25,8 @@ class SwapChain;
 class RenderPass;
 class Pipeline;
 class PipelineCache;
+class FrameBuffer;
+class CommandPool;
 class AK_DLL EngineApp
 {
 public:
@@ -59,9 +62,11 @@ protected:
 	SharedPtr<Instance> m_instance;
 	SharedPtr<Device> m_device;
 	SharedPtr<SwapChain> m_swapchain;
+	SharedPtr<CommandPool> m_commandPool;
 	SharedPtr<RenderPass> m_renderPass;
 	SharedPtr<PipelineCache> m_pipelineCache;
 	SharedPtr<Pipeline> m_pipeline;
+	std::vector<SharedPtr<FrameBuffer>> m_frameBuffers;
 
 	VkPhysicalDeviceFeatures m_enabledFeatures;
 	const char* m_name;

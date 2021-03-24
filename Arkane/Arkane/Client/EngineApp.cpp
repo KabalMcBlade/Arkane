@@ -9,6 +9,8 @@
 #include "../Renderer/RenderPass.h"
 #include "../Renderer/PipelineCache.h"
 #include "../Renderer/Pipeline.h"
+#include "../Renderer/FrameBuffer.h"
+#include "../Renderer/CommandPool.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -51,24 +53,45 @@ void EngineApp::InternalInitEngine()
 	m_device = MakeSharedPtr<Device>(m_instance->GetInstance(), GetSurafe(), m_enabledFeatures);
 	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetWidth(), GetHeight());
 
+	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
+
 	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
 	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
 	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
 
+	// here should be custom initialization and also set the render pass
 	InitEngine();
 }
 
 void EngineApp::InternalMainLoop()
 {
+	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+	m_frameBuffers.resize(count);
+
+	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
+	{
+		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetWidth(), GetHeight(), 1);
+		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
+		m_frameBuffers[i]->Create();
+	}
+
 	MainLoop();		// this has the loop
 }
 
 void EngineApp::InternalCleanup()
 {
 	// I need to manually force the delete because I need this order!
+	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_swapchain->GetImageViewsCount(); ++i)
+	{
+		m_frameBuffers[i].reset();
+	}
+	m_frameBuffers.clear();
+
 	m_pipeline.reset();
 	m_pipelineCache.reset();
 	m_renderPass.reset();
+
+	m_commandPool.reset();
 
 	m_swapchain.reset();
 	m_device.reset();

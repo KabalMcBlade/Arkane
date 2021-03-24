@@ -485,6 +485,8 @@
     <ClInclude Include="Events\Event.h" />
     <ClInclude Include="Events\EventManager.h" />
     <ClInclude Include="Geometry\Frustum.h" />
+    <ClInclude Include="Renderer\CommandPool.h" />
+    <ClInclude Include="Renderer\FrameBuffer.h" />
     <ClInclude Include="Renderer\PipelineCache.h" />
     <ClInclude Include="Renderer\DescriptorSetLayout.h" />
     <ClInclude Include="Renderer\Device.h" />
@@ -513,6 +515,8 @@
     <ClCompile Include="ECS\Managers\SystemManager.cpp" />
     <ClCompile Include="ECS\Managers\EntityManager.cpp" />
     <ClCompile Include="Events\EventManager.cpp" />
+    <ClCompile Include="Renderer\CommandPool.cpp" />
+    <ClCompile Include="Renderer\FrameBuffer.cpp" />
     <ClCompile Include="Renderer\PipelineCache.cpp" />
     <ClCompile Include="Renderer\DescriptorSetLayout.cpp" />
     <ClCompile Include="Renderer\Device.cpp" />

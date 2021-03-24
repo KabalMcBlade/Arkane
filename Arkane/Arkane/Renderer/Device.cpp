@@ -102,11 +102,6 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 
 Device::~Device()
 {
-	if (m_queueFamily)
-	{
-		delete m_queueFamily;
-	}
-
 	if (m_device != VK_NULL_HANDLE)
 	{
 		vkDestroyDevice(m_device, VulkanAllocator::Instance().GetCallbacks());
@@ -136,10 +131,10 @@ bool Device::IsDeviceSuitable(VkPhysicalDevice _physicalDevice)
 {
 	if (m_queueFamily)
 	{
-		delete m_queueFamily;
+		m_queueFamily.reset();
 	}
 
-	m_queueFamily = new QueueFamily(_physicalDevice, m_surface);
+	m_queueFamily = MakeSharedPtr<QueueFamily>(_physicalDevice, m_surface);
 	m_queueFamily->SetPhysicalDevice(_physicalDevice);
 	m_queueFamily->FindQueueFamilies(VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT);
 

@@ -55,6 +55,8 @@
 #include "Renderer/PipelineLayout.h"
 #include "Renderer/PipelineCache.h"
 #include "Renderer/Pipeline.h"
+#include "Renderer/FrameBuffer.h"
+#include "Renderer/CommandPool.h"
 
 
 //////////////////////////////////////////////////////////////////////////
