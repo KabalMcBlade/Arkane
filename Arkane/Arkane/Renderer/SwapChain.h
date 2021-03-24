@@ -12,11 +12,13 @@
 #include <vector>
 
 
+#pragma warning(disable:4251)
+
 AK_NAMESPACE_BEGIN
 
 class Device;
 
-class SwapChain final
+class AK_DLL SwapChain final
 {
 public:
 	struct SwapChainDetails

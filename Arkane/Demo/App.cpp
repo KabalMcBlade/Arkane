@@ -66,32 +66,48 @@ void App::InitWindow()
 
 void App::InitEngine()
 {
+	bool result = CreateGraphicPipeline();
+	akAssertReturnVoid(result == true, "Impossible finalize the Graphic Pipeline creation!");
+}
+
+bool App::CreateGraphicPipeline()
+{
 	bool result = false;
 
-	/*
 	//////////////////////////////////////////////////////////////////////////
-	// Sample load Shader (just to remind me relative path management)
-	{
-		std::string vertpath = m_fileSystem->GetShadersPath() + "ShaderTest.vert.spv";
-		std::string fragpath = m_fileSystem->GetShadersPath() + "ShaderTest.frag.spv";
+	// CREATE SHADERS
+	std::string vertpath = m_fileSystem->GetShadersPath() + "Simple.vert.spv";
+	std::string fragpath = m_fileSystem->GetShadersPath() + "Simple.frag.spv";
 
-		SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
-		SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
-
-		ShaderManager::Instance().Destroy(vertpath);
-		ShaderManager::Instance().Destroy(fragpath);
-	}
-	*/
-
-	VertexDescriptor vertex(EVertexLayout::EVertexLayout_C);
+	SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
+	SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
+	//////////////////////////////////////////////////////////////////////////
 
 
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE VERTEXDESCRIPTOR
+	SharedPtr<VertexDescriptor> vertex = MakeSharedPtr<VertexDescriptor>(EVertexLayout::EVertexLayout_C);
+	//////////////////////////////////////////////////////////////////////////
 
-	/*
-	
-	JUST TO KEEP TRACK OF A SIMPLER FIRST SETTING! IS NOT GOING TO BE PLACED HERE!
 
-	*/
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE DESCRIPTORSETLAYOUT
+	SharedPtr<DescriptorSetLayout> layout = MakeSharedPtr<DescriptorSetLayout>(m_device);
+	layout->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
+
+	result = layout->Create();
+	akAssertReturnValue(result == true, false, "Cannot create DescriptorSetLayout.");
+	//////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE PIPELINE LAYOUT
+	SharedPtr<PipelineLayout> pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, layout);
+	//pipelineLayout->PushConstant();	// Optional, only if we have!
+	result = pipelineLayout->Create();
+	akAssertReturnValue(result == true, false, "Cannot create PipelineLayout.");
+	//////////////////////////////////////////////////////////////////////////
+
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE RENDERPASS
@@ -122,15 +138,6 @@ void App::InitEngine()
 	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-	VkRenderPassCreateInfo renderPassInfo{};
-	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments = &colorAttachment;
-	renderPassInfo.subpassCount = 1;
-	renderPassInfo.pSubpasses = &subpass;
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies = &dependency;
-
 	m_renderPass->SetDimensions(m_width, m_height);
 	m_renderPass->SetOffset(0, 0);
 	m_renderPass->PushColorDepthStencilClearValue(0.0f, 0.0f, 0.0f, 1.0f);
@@ -142,8 +149,38 @@ void App::InitEngine()
 	//m_renderPass.SetFrameBuffer(m_framebuffer);
 
 	result = m_renderPass->Create();
-	akAssertReturnVoid(result == true, "Cannot create RenderPass, Init Engine Failed.");
+	akAssertReturnValue(result == true, false, "Cannot create RenderPass.");
 	//////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE PIEPLINE
+	m_pipeline->SetVertexInput(vertex);
+	m_pipeline->SetTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+	m_pipeline->SetPolygonMode(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_CLOCKWISE);
+	m_pipeline->SetDepthStencil(VK_FALSE, VK_FALSE);
+	m_pipeline->SetViewport(m_swapchain);
+	m_pipeline->SetMultisample(VK_FALSE, VK_SAMPLE_COUNT_1_BIT);
+
+	// Call Set without push will not add anything but will create the structure, which is need it
+	//m_pipeline->PushDynamic();	
+	m_pipeline->SetDynamics();
+
+	m_pipeline->PushColorBlendAttachment(VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, VK_FALSE);
+	m_pipeline->SetColorBlendAttachments();
+
+	m_pipeline->SetLayout(pipelineLayout);
+	m_pipeline->SetRenderPass(m_renderPass);
+	m_pipeline->SetCache(m_pipelineCache);
+
+	m_pipeline->PushShader(testVert);
+	m_pipeline->PushShader(testFrag);
+
+	result = m_pipeline->Create();
+	akAssertReturnValue(result == true, false, "Cannot create Pipeline.");
+	//////////////////////////////////////////////////////////////////////////
+
+	return result;
 }
 
 void App::MainLoop()
@@ -156,6 +193,8 @@ void App::MainLoop()
 
 void App::Cleanup()
 {
+	ShaderManager::Instance().DestroyAll();
+
 	vkDestroySurfaceKHR(m_instance->GetInstance(), m_surface, VulkanAllocator::Instance().GetCallbacks());
 
 	glfwDestroyWindow(m_window);

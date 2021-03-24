@@ -485,8 +485,12 @@
     <ClInclude Include="Events\Event.h" />
     <ClInclude Include="Events\EventManager.h" />
     <ClInclude Include="Geometry\Frustum.h" />
+    <ClInclude Include="Renderer\PipelineCache.h" />
+    <ClInclude Include="Renderer\DescriptorSetLayout.h" />
     <ClInclude Include="Renderer\Device.h" />
     <ClInclude Include="Renderer\Instance.h" />
+    <ClInclude Include="Renderer\Pipeline.h" />
+    <ClInclude Include="Renderer\PipelineLayout.h" />
     <ClInclude Include="Renderer\QueueFamily.h" />
     <ClInclude Include="Renderer\RenderPass.h" />
     <ClInclude Include="Renderer\SwapChain.h" />
@@ -509,8 +513,12 @@
     <ClCompile Include="ECS\Managers\SystemManager.cpp" />
     <ClCompile Include="ECS\Managers\EntityManager.cpp" />
     <ClCompile Include="Events\EventManager.cpp" />
+    <ClCompile Include="Renderer\PipelineCache.cpp" />
+    <ClCompile Include="Renderer\DescriptorSetLayout.cpp" />
     <ClCompile Include="Renderer\Device.cpp" />
     <ClCompile Include="Renderer\Instance.cpp" />
+    <ClCompile Include="Renderer\Pipeline.cpp" />
+    <ClCompile Include="Renderer\PipelineLayout.cpp" />
     <ClCompile Include="Renderer\QueueFamily.cpp" />
     <ClCompile Include="Renderer\RenderPass.cpp" />
     <ClCompile Include="Renderer\SwapChain.cpp" />

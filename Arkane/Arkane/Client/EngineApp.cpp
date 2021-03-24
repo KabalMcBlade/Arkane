@@ -7,6 +7,8 @@
 #include "../Renderer/Instance.h"
 #include "../Renderer/SwapChain.h"
 #include "../Renderer/RenderPass.h"
+#include "../Renderer/PipelineCache.h"
+#include "../Renderer/Pipeline.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -42,7 +44,6 @@ void EngineApp::InternalInitWindow()
 	m_instance = MakeSharedPtr<Instance>(m_name, m_version);
 
 	InitWindow();
-
 }
 
 void EngineApp::InternalInitEngine()
@@ -51,6 +52,8 @@ void EngineApp::InternalInitEngine()
 	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetWidth(), GetHeight());
 
 	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
+	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
+	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
 
 	InitEngine();
 }
@@ -63,6 +66,8 @@ void EngineApp::InternalMainLoop()
 void EngineApp::InternalCleanup()
 {
 	// I need to manually force the delete because I need this order!
+	m_pipeline.reset();
+	m_pipelineCache.reset();
 	m_renderPass.reset();
 
 	m_swapchain.reset();

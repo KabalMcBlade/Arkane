@@ -22,6 +22,8 @@ class Instance;
 class Device;
 class SwapChain;
 class RenderPass;
+class Pipeline;
+class PipelineCache;
 class AK_DLL EngineApp
 {
 public:
@@ -53,10 +55,14 @@ private:
 protected:
 	const CommandLineParser* m_commandLine;
 	const FileSystem* m_fileSystem;
+
 	SharedPtr<Instance> m_instance;
 	SharedPtr<Device> m_device;
 	SharedPtr<SwapChain> m_swapchain;
 	SharedPtr<RenderPass> m_renderPass;
+	SharedPtr<PipelineCache> m_pipelineCache;
+	SharedPtr<Pipeline> m_pipeline;
+
 	VkPhysicalDeviceFeatures m_enabledFeatures;
 	const char* m_name;
 	uint32_t m_version;

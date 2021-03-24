@@ -8,6 +8,9 @@
 
 #include <vector>
 
+
+#pragma warning( disable : 4251 )	//export std
+
 AK_NAMESPACE_BEGIN
 
 class AK_DLL VertexDescriptor final

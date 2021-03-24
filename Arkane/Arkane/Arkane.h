@@ -51,6 +51,10 @@
 #include "Renderer/VertexLayout.h"
 #include "Renderer/VertexDescriptor.h"
 #include "Renderer/RenderPass.h"
+#include "Renderer/DescriptorSetLayout.h"
+#include "Renderer/PipelineLayout.h"
+#include "Renderer/PipelineCache.h"
+#include "Renderer/Pipeline.h"
 
 
 //////////////////////////////////////////////////////////////////////////

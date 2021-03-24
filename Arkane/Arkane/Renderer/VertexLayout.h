@@ -67,7 +67,7 @@ enum EVertexLayout : uint8_t
 
 
 // Position Only
-struct Vertex_P
+AK_MEMORY_ALIGNED struct Vertex_P
 {
 	float m_position[3];
 
@@ -81,7 +81,7 @@ struct Vertex_P
 };
 
 // Position and Color
-struct Vertex_C : public Vertex_P
+AK_MEMORY_ALIGNED struct Vertex_C : public Vertex_P
 {
 	float m_color[4];
 
@@ -112,7 +112,7 @@ struct Vertex_C : public Vertex_P
 };
 
 // Position + Normal + Tex Coordinates 0
-struct Vertex_N : public Vertex_P
+AK_MEMORY_ALIGNED struct Vertex_N : public Vertex_P
 {
 	float m_normal[3];
 	float m_texCoord0[2];
@@ -145,7 +145,7 @@ struct Vertex_N : public Vertex_P
 };
 
 // Position + Normal + Tex Coordinates 0 + Tex Coordinates 1
-struct Vertex_T : public Vertex_N
+AK_MEMORY_ALIGNED struct Vertex_T : public Vertex_N
 {
 	float m_texCoord1[2];
 
@@ -171,7 +171,7 @@ struct Vertex_T : public Vertex_N
 
 
 // Full: Position + Normal + Tex Coordinates 0 + Tangent
-struct Vertex_F : public Vertex_N
+AK_MEMORY_ALIGNED struct Vertex_F : public Vertex_N
 {
 	float m_tangent[4];
 
@@ -187,7 +187,7 @@ struct Vertex_F : public Vertex_N
 
 
 // Extended: Position + Normal + Tex Coordinates 0 + Tex Coordinates 1 + Tangent
-struct Vertex_E : public Vertex_T
+AK_MEMORY_ALIGNED struct Vertex_E : public Vertex_T
 {
 	float m_tangent[4];
 
@@ -203,7 +203,7 @@ struct Vertex_E : public Vertex_T
 
 
 // Skinned
-struct SkinnedVertex
+AK_MEMORY_ALIGNED struct SkinnedVertex
 {
 	float m_weights[4];
 	uint16_t m_joints[4];
@@ -253,22 +253,22 @@ struct SkinnedVertex
 
 
 // Vertex_P + Skinned
-struct Vertex_P_S : public Vertex_P, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_P_S : public Vertex_P, public SkinnedVertex { };
 
 // Vertex_C + Skinned
-struct Vertex_C_S : public Vertex_C, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_C_S : public Vertex_C, public SkinnedVertex { };
 
 // Vertex_N + Skinned
-struct Vertex_N_S : public Vertex_N, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_N_S : public Vertex_N, public SkinnedVertex { };
 
 // Vertex_P + Skinned
-struct Vertex_T_S : public Vertex_T, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_T_S : public Vertex_T, public SkinnedVertex { };
 
 // Vertex_C + Skinned
-struct Vertex_F_S : public Vertex_F, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_F_S : public Vertex_F, public SkinnedVertex { };
 
 // Vertex_N + Skinned
-struct Vertex_E_S : public Vertex_E, public SkinnedVertex { };
+AK_MEMORY_ALIGNED struct Vertex_E_S : public Vertex_E, public SkinnedVertex { };
 
 
 AK_NAMESPACE_END

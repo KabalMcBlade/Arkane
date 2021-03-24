@@ -39,6 +39,9 @@ public:
 	virtual void Cleanup() override;
 
 private:
+	bool CreateGraphicPipeline();
+
+private:
 	VkSurfaceKHR m_surface;
 	GLFWwindow* m_window;
 
