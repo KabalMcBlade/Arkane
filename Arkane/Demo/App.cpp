@@ -68,8 +68,6 @@ void App::InitEngine()
 {
 	bool result = false;
 
-	Device& currentDevice = *m_device;
-
 	/*
 	//////////////////////////////////////////////////////////////////////////
 	// Sample load Shader (just to remind me relative path management)
@@ -77,8 +75,8 @@ void App::InitEngine()
 		std::string vertpath = m_fileSystem->GetShadersPath() + "ShaderTest.vert.spv";
 		std::string fragpath = m_fileSystem->GetShadersPath() + "ShaderTest.frag.spv";
 
-		SharedPtr<Shader> testVert = ShaderManager::Instance().Load(currentDevice, vertpath);
-		SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(currentDevice, fragpath);
+		SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
+		SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
 
 		ShaderManager::Instance().Destroy(vertpath);
 		ShaderManager::Instance().Destroy(fragpath);
@@ -97,8 +95,6 @@ void App::InitEngine()
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE RENDERPASS
-	RenderPass renderPass(currentDevice);
-
 	VkAttachmentDescription colorAttachment{};
 	colorAttachment.format = m_swapchain->GetFormat();
 	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -135,18 +131,17 @@ void App::InitEngine()
 	renderPassInfo.dependencyCount = 1;
 	renderPassInfo.pDependencies = &dependency;
 
+	m_renderPass->SetDimensions(m_width, m_height);
+	m_renderPass->SetOffset(0, 0);
+	m_renderPass->PushColorDepthStencilClearValue(0.0f, 0.0f, 0.0f, 1.0f);
+	m_renderPass->PushAttachmentDescription(colorAttachment);
+	m_renderPass->PushSubpassDependency(dependency);
+	m_renderPass->PushSubpassDescription(subpass);
 
-	renderPass.SetDimensions(m_width, m_height);
-	renderPass.SetOffset(0, 0);
-	renderPass.PushColorDepthStencilClearValue(0.0f, 0.0f, 0.0f, 1.0f);
-	renderPass.PushAttachmentDescription(colorAttachment);
-	renderPass.PushSubpassDependency(dependency);
-	renderPass.PushSubpassDescription(subpass);
+	// NOTE: the FrameBuffer is need it ONLY for the m_renderPass.GetBeginInfo()
+	//m_renderPass.SetFrameBuffer(m_framebuffer);
 
-	// NOTE: the FrameBuffer is need it ONLY for the renderPass.GetBeginInfo()
-	//renderPass.SetFrameBuffer(m_framebuffer);
-
-	result = renderPass.Create();
+	result = m_renderPass->Create();
 	akAssertReturnVoid(result == true, "Cannot create RenderPass, Init Engine Failed.");
 	//////////////////////////////////////////////////////////////////////////
 }

@@ -6,6 +6,7 @@
 #include "VertexLayout.h"
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
 
 #include <vector>
 
@@ -19,7 +20,7 @@ class Device;
 class AK_DLL RenderPass final
 {
 public:
-	RenderPass(const Device& _device);
+	RenderPass(SharedPtr<Device> _device);
 	~RenderPass();
 
 	bool Create();
@@ -88,7 +89,7 @@ public:
 	void PushSubpassDescription(VkSubpassDescription _description);
 
 private:
-	VkDevice m_device;
+	SharedPtr<Device> m_device;
 	VkRenderPass m_renderPass;
 	VkFramebuffer m_framebuffer;
 	uint32_t m_width;

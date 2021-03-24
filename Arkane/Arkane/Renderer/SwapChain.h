@@ -4,6 +4,8 @@
 #include <vulkan/vulkan.h>
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
+
 #include "QueueFamily.h"
 
 #include <memory>
@@ -27,7 +29,7 @@ public:
 	SwapChain::SwapChainDetails QuerySwapChainSupport(const VkPhysicalDevice& _device, VkSurfaceKHR _surface);
 
 public:
-	SwapChain(const Device& _device, const VkSurfaceKHR& _surface, uint32_t _width, uint32_t _height);
+	SwapChain(SharedPtr<Device> _device, const VkSurfaceKHR& _surface, uint32_t _width, uint32_t _height);
 	~SwapChain();
 
 	bool RecreateSwapChain();
@@ -51,7 +53,7 @@ private:
 	VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& _capabilities);
 	
 private:
-	const Device& m_device;
+	SharedPtr<Device> m_device;
 	VkSurfaceKHR m_surface;
 	uint32_t m_width;
 	uint32_t m_height;

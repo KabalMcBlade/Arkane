@@ -4,8 +4,14 @@
 #include <vulkan/vulkan.h>
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
+
+#include "../Renderer/Device.h"
 
 #include <string>
+
+
+#pragma warning(disable:4251)
 
 AK_NAMESPACE_BEGIN
 
@@ -13,7 +19,7 @@ class FileSystem;
 class AK_DLL Shader final
 {
 public:
-	Shader(const VkDevice& _device, const std::string& _path);
+	Shader(SharedPtr<Device> _device, const std::string& _path);
 	~Shader();
 
 	AK_INLINE const VkShaderModule& GetShaderModule() const { return m_module; }
@@ -30,7 +36,7 @@ private:
 	static VkShaderStageFlagBits ConvertExtToShaderStage(const std::string& _ext);
 
 private:
-	VkDevice m_device;
+	SharedPtr<Device> m_device;
 	VkShaderModule m_module;
 	VkShaderStageFlagBits m_stage;
 	uint32_t m_hash;

@@ -22,7 +22,7 @@ class AK_DLL ShaderManager final
 public:
 	static ShaderManager& Instance();
 
-	SharedPtr<Shader> Load(const Device& _device, const std::string& _path);
+	SharedPtr<Shader> Load(SharedPtr<Device> _device, const std::string& _path);
 
 	void Destroy(const std::string& _path);
 	void Destroy(uint32_t _id);

@@ -15,7 +15,7 @@ ShaderManager& ShaderManager::Instance()
 	return instance;
 }
 
-SharedPtr<Shader> ShaderManager::Load(const Device& _device, const std::string& _path)
+SharedPtr<Shader> ShaderManager::Load(SharedPtr<Device> _device, const std::string& _path)
 {
 	if (_path.empty())
 	{
@@ -25,7 +25,7 @@ SharedPtr<Shader> ShaderManager::Load(const Device& _device, const std::string& 
 	SharedPtr<Shader> shader = GetShader(_path);
 	if (shader == nullptr)
 	{
-		shader = MakeSharedPtr<Shader>(_device.GetDevice(), _path);
+		shader = MakeSharedPtr<Shader>(_device, _path);
 		m_shaders[shader->GetId()] = shader;
 	}
 

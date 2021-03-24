@@ -9,8 +9,8 @@
 AK_NAMESPACE_BEGIN
 
 
-RenderPass::RenderPass(const Device& _device)
-	: m_device(_device.GetDevice())
+RenderPass::RenderPass(SharedPtr<Device> _device)
+	: m_device(_device)
 	, m_renderPass(VK_NULL_HANDLE)
 	, m_framebuffer(VK_NULL_HANDLE)
 	, m_width(0)
@@ -25,7 +25,7 @@ RenderPass::~RenderPass()
 {
 	if (m_device != VK_NULL_HANDLE && m_renderPass != VK_NULL_HANDLE)
 	{
-		vkDestroyRenderPass(m_device, m_renderPass, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyRenderPass(m_device->GetDevice(), m_renderPass, VulkanAllocator::Instance().GetCallbacks());
 		m_renderPass = VK_NULL_HANDLE;
 	}
 }
@@ -44,7 +44,7 @@ bool RenderPass::Create()
 	createInfo.dependencyCount = static_cast<uint32_t>(m_subpassDependencies.size());
 	createInfo.pDependencies = m_subpassDependencies.data();
 
-	VkResult result = vkCreateRenderPass(m_device, &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_renderPass);
+	VkResult result = vkCreateRenderPass(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_renderPass);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create RenderPass");
 
 	return m_renderPass != VK_NULL_HANDLE;

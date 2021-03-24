@@ -39,25 +39,25 @@ SwapChain::SwapChainDetails SwapChain::QuerySwapChainSupport(const VkPhysicalDev
 
 //////////////////////////////////////////////////////////////////////////
 
-SwapChain::SwapChain(const Device& _device, const VkSurfaceKHR& _surface, uint32_t _width, uint32_t _height) : m_device(_device), m_surface(_surface), m_swapChain(VK_NULL_HANDLE), m_width(_width), m_height(_height)
+SwapChain::SwapChain(SharedPtr<Device> _device, const VkSurfaceKHR& _surface, uint32_t _width, uint32_t _height) : m_device(_device), m_surface(_surface), m_swapChain(VK_NULL_HANDLE), m_width(_width), m_height(_height)
 {
 	RecreateSwapChain();
 }
 
 SwapChain::~SwapChain()
 {
-	if (m_device.GetDevice() != VK_NULL_HANDLE)
+	if (m_device->GetDevice() != VK_NULL_HANDLE)
 	{
 		if (m_swapChain != VK_NULL_HANDLE)
 		{
 			for (uint32_t i = 0; i < m_swapChainImageViews.size(); ++i)
 			{
-				vkDestroyImageView(m_device.GetDevice(), m_swapChainImageViews[i], VulkanAllocator::Instance().GetCallbacks());
+				vkDestroyImageView(m_device->GetDevice(), m_swapChainImageViews[i], VulkanAllocator::Instance().GetCallbacks());
 			}
 
 			m_swapChainImageViews.clear();
 
-			vkDestroySwapchainKHR(m_device.GetDevice(), m_swapChain, VulkanAllocator::Instance().GetCallbacks());
+			vkDestroySwapchainKHR(m_device->GetDevice(), m_swapChain, VulkanAllocator::Instance().GetCallbacks());
 		}
 		m_swapChain = VK_NULL_HANDLE;
 	}
@@ -80,7 +80,7 @@ bool SwapChain::RecreateSwapChain()
 
 bool SwapChain::CreateSwapChain()
 {
-	SwapChain::SwapChainDetails swapChainSupport = SwapChain::QuerySwapChainSupport(m_device.GetPhysicalDevice(), m_surface);
+	SwapChain::SwapChainDetails swapChainSupport = SwapChain::QuerySwapChainSupport(m_device->GetPhysicalDevice(), m_surface);
 
 	VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(swapChainSupport.m_formats);
 	VkPresentModeKHR presentMode = ChooseSwapPresentMode(swapChainSupport.m_presentModes);
@@ -102,7 +102,7 @@ bool SwapChain::CreateSwapChain()
 	createInfo.imageArrayLayers = 1; // 2 for VR or generic stereoscopic 
 	createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-	const QueueFamily &indices = m_device.GetQueueFamily();
+	const QueueFamily &indices = m_device->GetQueueFamily();
 	uint32_t queueFamilyIndices[] = { (uint32_t)indices.GetGraphicsFamily(), (uint32_t)indices.GetPresentFamily() };
 
 	if (indices.GetGraphicsFamily() != indices.GetPresentFamily())
@@ -127,15 +127,15 @@ bool SwapChain::CreateSwapChain()
 	createInfo.oldSwapchain = oldSwapChain;
 
 	VkSwapchainKHR newSwapChain;
-	VkResult result = vkCreateSwapchainKHR(m_device.GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &newSwapChain);
+	VkResult result = vkCreateSwapchainKHR(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &newSwapChain);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Failed to create swap chain");
 
 	m_swapChain = newSwapChain;
 
-	vkGetSwapchainImagesKHR(m_device.GetDevice(), m_swapChain, &imageCount, nullptr);
+	vkGetSwapchainImagesKHR(m_device->GetDevice(), m_swapChain, &imageCount, nullptr);
 	m_swapChainImages.resize(imageCount);
 
-	vkGetSwapchainImagesKHR(m_device.GetDevice(), m_swapChain, &imageCount, m_swapChainImages.data());
+	vkGetSwapchainImagesKHR(m_device->GetDevice(), m_swapChain, &imageCount, m_swapChainImages.data());
 	m_swapChainImageFormat = surfaceFormat.format;
 	m_swapChainExtent = extent;
 
@@ -161,7 +161,7 @@ bool SwapChain::CreateSwapChainImageViews()
 		viewInfo.subresourceRange.layerCount = 1;
 		viewInfo.flags = 0;
 
-		VkResult result = vkCreateImageView(m_device.GetDevice(), &viewInfo, VulkanAllocator::Instance().GetCallbacks(), &m_swapChainImageViews[i]);
+		VkResult result = vkCreateImageView(m_device->GetDevice(), &viewInfo, VulkanAllocator::Instance().GetCallbacks(), &m_swapChainImageViews[i]);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot get swap chain image");
 	}
 

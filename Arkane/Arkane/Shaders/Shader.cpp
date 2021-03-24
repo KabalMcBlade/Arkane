@@ -5,6 +5,7 @@
 #include "../Client/FileSystem.h"
 #include "../Utilities/Hash.h"
 
+
 #include <fstream>
 
 
@@ -43,7 +44,7 @@ VkShaderStageFlagBits Shader::ConvertExtToShaderStage(const std::string& _ext)
 	return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
 }
 
-Shader::Shader(const VkDevice& _device, const std::string& _path): m_device(_device), m_module(VK_NULL_HANDLE)
+Shader::Shader(SharedPtr<Device> _device, const std::string& _path) : m_device(_device), m_module(VK_NULL_HANDLE)
 {
 	std::string type = FileSystem::GetShaderTypeExt(_path);
 
@@ -67,7 +68,7 @@ Shader::Shader(const VkDevice& _device, const std::string& _path): m_device(_dev
 	createInfo.codeSize = fileSize;
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(binary);
 
-	VkResult result = vkCreateShaderModule(m_device, &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_module);
+	VkResult result = vkCreateShaderModule(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_module);
 
 	delete [] binary;
 
@@ -80,7 +81,7 @@ Shader::~Shader()
 {
 	if (m_device != VK_NULL_HANDLE && m_module != VK_NULL_HANDLE)
 	{
-		vkDestroyShaderModule(m_device, m_module, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyShaderModule(m_device->GetDevice(), m_module, VulkanAllocator::Instance().GetCallbacks());
 		m_module = VK_NULL_HANDLE;
 	}
 }

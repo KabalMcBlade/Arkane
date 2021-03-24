@@ -5,6 +5,7 @@
 
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
 
 
 #include <memory>
@@ -20,6 +21,7 @@ class FileSystem;
 class Instance;
 class Device;
 class SwapChain;
+class RenderPass;
 class AK_DLL EngineApp
 {
 public:
@@ -51,9 +53,10 @@ private:
 protected:
 	const CommandLineParser* m_commandLine;
 	const FileSystem* m_fileSystem;
-	Instance* m_instance;
-	Device* m_device;
-	SwapChain* m_swapchain;
+	SharedPtr<Instance> m_instance;
+	SharedPtr<Device> m_device;
+	SharedPtr<SwapChain> m_swapchain;
+	SharedPtr<RenderPass> m_renderPass;
 	VkPhysicalDeviceFeatures m_enabledFeatures;
 	const char* m_name;
 	uint32_t m_version;
