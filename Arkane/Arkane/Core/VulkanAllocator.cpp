@@ -2,7 +2,13 @@
 
 #include "../Dependencies/VMem/VMem.h"
 
+#define VMA_IMPLEMENTATION
+#include  "../Dependencies/VulkanMemoryAllocator/src/vk_mem_alloc.h"
+
 #include "../Core/Assertions.h"
+
+#include "../Renderer/Device.h"
+#include "../Renderer/Instance.h"
 
 
 #pragma warning(disable : 26812)
@@ -14,6 +20,22 @@ VulkanAllocator& VulkanAllocator::Instance()
 {
 	static VulkanAllocator instance;
 	return instance;
+}
+
+void VulkanAllocator::CreateVMA(SharedPtr<Device> _device)
+{
+	VmaAllocatorCreateInfo allocatorInfo = {};
+	allocatorInfo.vulkanApiVersion = Instance::s_ApiVersion;
+	allocatorInfo.physicalDevice = _device->GetPhysicalDevice();
+	allocatorInfo.device = _device->GetDevice();
+	allocatorInfo.instance = _device->GetInstance();
+
+	vmaCreateAllocator(&allocatorInfo, &m_vmaAllocator);
+}
+
+void VulkanAllocator::DestroyVMA()
+{
+	vmaDestroyAllocator(m_vmaAllocator);
 }
 
 void* VulkanAllocator::Allocation(size_t _size, size_t _alignment, VkSystemAllocationScope _allocationScope)

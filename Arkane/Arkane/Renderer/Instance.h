@@ -11,6 +11,9 @@ AK_NAMESPACE_BEGIN
 class Instance final
 {
 public:
+	static uint32_t s_ApiVersion;
+
+public:
 	Instance(const char* _appName, uint32_t _appVersion = VK_MAKE_VERSION(0, 0, 1));
 	~Instance();
 

@@ -1,6 +1,7 @@
 #include "EngineApp.h"
 
 #include "../Core/Assertions.h"
+#include "../Core/VulkanAllocator.h"
 
 #include "../Renderer/QueueFamily.h"
 #include "../Renderer/Device.h"
@@ -11,6 +12,7 @@
 #include "../Renderer/Pipeline.h"
 #include "../Renderer/FrameBuffer.h"
 #include "../Renderer/CommandPool.h"
+#include "../Renderer/StagingManager.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -51,6 +53,9 @@ void EngineApp::InternalInitWindow()
 void EngineApp::InternalInitEngine()
 {
 	m_device = MakeSharedPtr<Device>(m_instance->GetInstance(), GetSurafe(), m_enabledFeatures);
+
+	VulkanAllocator::Instance().CreateVMA(m_device);
+
 	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetWidth(), GetHeight());
 
 	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
@@ -58,6 +63,8 @@ void EngineApp::InternalInitEngine()
 	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
 	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
 	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
+
+	StagingManager::Instance().Init(m_device, m_swapchain);
 
 	// here should be custom initialization and also set the render pass
 	InitEngine();
@@ -80,6 +87,8 @@ void EngineApp::InternalMainLoop()
 
 void EngineApp::InternalCleanup()
 {
+	StagingManager::Instance().Shutdown();
+
 	// I need to manually force the delete because I need this order!
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_swapchain->GetImageViewsCount(); ++i)
 	{
@@ -94,6 +103,9 @@ void EngineApp::InternalCleanup()
 	m_commandPool.reset();
 
 	m_swapchain.reset();
+
+	VulkanAllocator::Instance().DestroyVMA();
+
 	m_device.reset();
 
 	Cleanup();

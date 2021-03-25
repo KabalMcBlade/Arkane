@@ -57,6 +57,7 @@
 #include "Renderer/Pipeline.h"
 #include "Renderer/FrameBuffer.h"
 #include "Renderer/CommandPool.h"
+#include "Renderer/StagingManager.h"
 
 
 //////////////////////////////////////////////////////////////////////////

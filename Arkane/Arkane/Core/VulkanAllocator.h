@@ -4,16 +4,26 @@
 #include <vulkan/vulkan.h>
 
 #include "../Core/Defines.h"
+#include "../Core/SmartPointers.h"
 
+#include  "../Dependencies/VulkanMemoryAllocator/src/vk_mem_alloc.h"
+
+
+#pragma warning(disable:4251)
 
 AK_NAMESPACE_BEGIN
 
+class Device;
 class AK_DLL VulkanAllocator final
 {
 public:
 	static VulkanAllocator& Instance();
 
+	void CreateVMA(SharedPtr<Device> _device);
+	void DestroyVMA();
+
 	AK_INLINE const VkAllocationCallbacks* GetCallbacks() const { return &m_callback; }
+	AK_INLINE const VmaAllocator& GetVMA() const { return m_vmaAllocator; }
 
 private:
 	static void* VKAPI_CALL Allocation(void* _pUserData, size_t _size, size_t _alignment, VkSystemAllocationScope _allocationScope);
@@ -24,7 +34,7 @@ private:
 	void* Reallocation(void* _pOriginal, size_t _size, size_t _alignment, VkSystemAllocationScope _allocationScope);
 	void Free(void* _pMemory);
 
-	VulkanAllocator()
+	VulkanAllocator() : m_vmaAllocator(nullptr)
 	{
 		m_callback.pUserData = (void*)this;
 		m_callback.pfnAllocation = &VulkanAllocator::Allocation;
@@ -37,6 +47,7 @@ private:
 	~VulkanAllocator() {}
 
 private:
+	VmaAllocator m_vmaAllocator;
 	VkAllocationCallbacks m_callback;
 };
 

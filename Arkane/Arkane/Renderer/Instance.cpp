@@ -45,6 +45,8 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugReportFlagsEXT flags,
 
 //////////////////////////////////////////////////////////////////////////
 
+uint32_t Instance::s_ApiVersion = 0;
+
 Instance::Instance(const char* _appName, uint32_t _appVersion /*= VK_MAKE_VERSION(0, 0, 1)*/) : m_instance(VK_NULL_HANDLE), m_debugReportCreated(false)
 {
 #if _DEBUG
@@ -53,12 +55,14 @@ Instance::Instance(const char* _appName, uint32_t _appVersion /*= VK_MAKE_VERSIO
 	m_validationLayerEnabled = false;
 #endif
 
+	Instance::s_ApiVersion = VK_API_VERSION_1_2;
+
 	VkApplicationInfo appInfo = {};
 	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pApplicationName = _appName;
 	appInfo.pEngineName = "Arkane";
 	appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion = VK_API_VERSION_1_2;
+	appInfo.apiVersion = Instance::s_ApiVersion;
 	appInfo.applicationVersion = _appVersion;
 
 	VkInstanceCreateInfo createInfo = {};

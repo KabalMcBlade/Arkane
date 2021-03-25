@@ -29,6 +29,11 @@ public:
 		return m_device;
 	}
 
+	AK_INLINE const VkInstance& GetInstance() const
+	{
+		return m_instance;
+	}
+
 	AK_INLINE SharedPtr<QueueFamily> GetQueueFamily() const
 	{
 		return m_queueFamily;

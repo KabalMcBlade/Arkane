@@ -471,7 +471,6 @@
     <ClInclude Include="Dependencies\tiny_ktx.h" />
     <ClInclude Include="Dependencies\VMem\VMem.h" />
     <ClInclude Include="Dependencies\VulkanMemoryAllocator\src\vk_mem_alloc.h" />
-    <ClInclude Include="Dependencies\VulkanMemoryAllocator\src\VmaUsage.h" />
     <ClInclude Include="ECS\Components\Camera.h" />
     <ClInclude Include="ECS\Components\Renderable.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
@@ -500,6 +499,7 @@
     <ClInclude Include="Renderer\VertexLayout.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Shaders\ShaderManager.h" />
+    <ClInclude Include="Renderer\StagingManager.h" />
     <ClInclude Include="Utilities\Hash.h" />
   </ItemGroup>
   <ItemGroup>
@@ -510,7 +510,6 @@
     <ClCompile Include="Core\VulkanAllocator.cpp" />
     <ClCompile Include="Dependencies\glm\glm\detail\glm.cpp" />
     <ClCompile Include="Dependencies\VMem\VMem.cpp" />
-    <ClCompile Include="Dependencies\VulkanMemoryAllocator\src\VmaUsage.cpp" />
     <ClCompile Include="ECS\Managers\ECSManager.cpp" />
     <ClCompile Include="ECS\Managers\SystemManager.cpp" />
     <ClCompile Include="ECS\Managers\EntityManager.cpp" />
@@ -529,6 +528,7 @@
     <ClCompile Include="Renderer\VertexDescriptor.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Shaders\ShaderManager.cpp" />
+    <ClCompile Include="Renderer\StagingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\glm\glm\detail\func_common.inl" />
