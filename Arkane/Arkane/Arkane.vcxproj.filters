@@ -1005,6 +1005,9 @@
     <ClInclude Include="Renderer\StagingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer\Buffers\BaseBufferObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Arkane.cpp">

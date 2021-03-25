@@ -484,6 +484,7 @@
     <ClInclude Include="Events\Event.h" />
     <ClInclude Include="Events\EventManager.h" />
     <ClInclude Include="Geometry\Frustum.h" />
+    <ClInclude Include="Renderer\Buffers\BaseBufferObject.h" />
     <ClInclude Include="Renderer\CommandPool.h" />
     <ClInclude Include="Renderer\FrameBuffer.h" />
     <ClInclude Include="Renderer\PipelineCache.h" />

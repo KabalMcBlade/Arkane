@@ -58,6 +58,7 @@
 #include "Renderer/FrameBuffer.h"
 #include "Renderer/CommandPool.h"
 #include "Renderer/StagingManager.h"
+#include "Renderer/Buffers/BaseBufferObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
