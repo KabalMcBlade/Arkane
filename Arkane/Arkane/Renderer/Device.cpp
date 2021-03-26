@@ -5,6 +5,7 @@
 
 #include <set>
 #include <string>
+#include <map>
 
 
 #pragma warning(disable : 26812 26495)
@@ -39,8 +40,17 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
 
+	// first iteration is to rate the best device
+	std::multimap<uint32_t, VkPhysicalDevice, std::greater<uint32_t>> candidates;
 	for (VkPhysicalDevice device : devices)
 	{
+		uint32_t score = RateDeviceSuitability(device);
+		candidates.insert(std::make_pair(score, device));
+	}
+
+	for (std::multimap<uint32_t, VkPhysicalDevice, std::greater<uint32_t>>::iterator it = candidates.begin(); it != candidates.end(); )
+	{
+		VkPhysicalDevice device = it->second;
 		if (IsDeviceSuitable(device))
 		{
 			m_physicalDevice = device;
@@ -94,7 +104,7 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 
 			vkGetPhysicalDeviceProperties(m_physicalDevice, &m_physicalDeviceProperties);
 
-			// just get the first for now!
+			// The first available, sorted out by the most "powerful" is fine.
 			return;
 		}
 	}
@@ -125,6 +135,64 @@ bool Device::CheckDeviceExtensionSupport(VkPhysicalDevice _device, const std::ve
 	}
 
 	return requiredExtensions.empty();
+}
+
+uint32_t Device::RateDeviceSuitability(VkPhysicalDevice _physicalDevice)
+{
+	uint32_t score = 0;
+
+	VkPhysicalDeviceProperties deviceProperties;
+	VkPhysicalDeviceFeatures deviceFeatures;
+	VkPhysicalDeviceMemoryProperties deviceMemory;
+	vkGetPhysicalDeviceProperties(_physicalDevice, &deviceProperties);
+	vkGetPhysicalDeviceFeatures(_physicalDevice, &deviceFeatures);
+	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &deviceMemory);
+
+	switch (deviceProperties.deviceType)
+	{
+	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+		score += 1000;
+		break;
+	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+		score += 100;
+		break;
+	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+		score += 10;
+		break;
+	case VK_PHYSICAL_DEVICE_TYPE_CPU:
+		score += 1;
+		break;
+	default:
+		score += 0;
+		break;
+	}
+
+	// some score based on texture size allowed
+	score += deviceProperties.limits.maxImageDimension1D;
+	score += deviceProperties.limits.maxImageDimension2D;
+	score += deviceProperties.limits.maxImageDimension3D;
+	score += deviceProperties.limits.maxImageDimensionCube;
+
+	// if does not have this, simply score 0!
+	score *= (uint32_t)deviceFeatures.geometryShader;
+	score *= (uint32_t)deviceFeatures.tessellationShader;
+
+	// Determine the available device local memory only for discrete GPU, because integrated and CPU have more addressable VMEM
+	if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+	{
+		auto heapsPointer = deviceMemory.memoryHeaps;
+		auto heaps = std::vector<VkMemoryHeap>(heapsPointer, heapsPointer + deviceMemory.memoryHeapCount);
+
+		for (const auto& heap : heaps)
+		{
+			if (heap.flags & VkMemoryHeapFlagBits::VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+			{
+				score += (uint32_t)heap.size;
+			}
+		}
+	}
+
+	return score;
 }
 
 bool Device::IsDeviceSuitable(VkPhysicalDevice _physicalDevice)

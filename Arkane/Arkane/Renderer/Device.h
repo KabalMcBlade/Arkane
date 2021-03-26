@@ -51,6 +51,7 @@ public:
 private:
 	bool CheckDeviceExtensionSupport(VkPhysicalDevice _device, const std::vector<const char *>& _deviceExtensions);
 	bool IsDeviceSuitable(VkPhysicalDevice _physicalDevice);
+	uint32_t RateDeviceSuitability(VkPhysicalDevice _physicalDevice);
 
 private:
 	VkInstance m_instance;
