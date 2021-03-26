@@ -175,6 +175,7 @@
     <ClInclude Include="Client\CommandLineParser.h" />
     <ClInclude Include="Client\EngineApp.h" />
     <ClInclude Include="Client\FileSystem.h" />
+    <ClInclude Include="Core\MemCpy.h" />
     <ClInclude Include="Core\SmartPointers.h" />
     <ClInclude Include="Core\Assertions.h" />
     <ClInclude Include="Core\Defines.h" />

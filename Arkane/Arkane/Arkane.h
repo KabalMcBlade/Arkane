@@ -23,6 +23,7 @@
 #include "Core/Assertions.h"
 #include "Core/VulkanAllocator.h"
 #include "Core/SmartPointers.h"
+#include "Core/MemCpy.h"
 
 
 //////////////////////////////////////////////////////////////////////////
