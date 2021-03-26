@@ -60,6 +60,8 @@
 #include "Renderer/CommandPool.h"
 #include "Renderer/StagingManager.h"
 #include "Renderer/Buffers/BaseBufferObject.h"
+#include "Renderer/Buffers/VertexBufferObject.h"
+#include "Renderer/Buffers/IndexBufferObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
