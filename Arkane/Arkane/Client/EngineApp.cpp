@@ -13,6 +13,7 @@
 #include "../Renderer/FrameBuffer.h"
 #include "../Renderer/CommandPool.h"
 #include "../Renderer/StagingManager.h"
+#include "../Renderer/CommandBuffer.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -73,13 +74,19 @@ void EngineApp::InternalInitEngine()
 void EngineApp::InternalMainLoop()
 {
 	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+	
 	m_frameBuffers.resize(count);
-
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
 	{
 		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetWidth(), GetHeight(), 1);
 		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
 		m_frameBuffers[i]->Create();
+	}
+
+	m_commandBuffers.resize(count);
+	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < count; ++i)
+	{
+		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
 	MainLoop();		// this has the loop
@@ -90,7 +97,13 @@ void EngineApp::InternalCleanup()
 	StagingManager::Instance().Shutdown();
 
 	// I need to manually force the delete because I need this order!
-	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_swapchain->GetImageViewsCount(); ++i)
+	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)
+	{
+		m_commandBuffers[i].reset();
+	}
+	m_commandBuffers.clear();
+
+	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_frameBuffers.size(); ++i)
 	{
 		m_frameBuffers[i].reset();
 	}

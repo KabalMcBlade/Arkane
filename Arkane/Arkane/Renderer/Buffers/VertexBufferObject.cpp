@@ -21,7 +21,7 @@ VertexBufferObject::~VertexBufferObject()
 
 bool VertexBufferObject::AllocBufferObject(const void* _data, uint32_t _allocSize, EBufferUsage _usage)
 {
-	akAssertReturnValue(m_apiObject == VK_NULL_HANDLE, false, "BufferObject already allocated");
+	akAssertReturnValue(m_object == VK_NULL_HANDLE, false, "BufferObject already allocated");
 	akAssertReturnValue(AK_IS_ALIGNED(_data, 16), false, "Buffer not aligned to 16");
 	akAssertReturnValue(_allocSize > 0, false, "Size must be greeter than 0");
 
@@ -52,7 +52,7 @@ bool VertexBufferObject::AllocBufferObject(const void* _data, uint32_t _allocSiz
 		allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 	}
 
-	VkResult result = vmaCreateBuffer(VulkanAllocator::Instance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_apiObject, &m_vmaAllocation, &m_allocation);
+	VkResult result = vmaCreateBuffer(VulkanAllocator::Instance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_object, &m_vmaAllocation, &m_allocation);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create buffer");
 
 	if (_data != nullptr) 
@@ -76,15 +76,15 @@ void VertexBufferObject::FreeBufferObject()
 		return;
 	}
 
-	if (m_apiObject == VK_NULL_HANDLE)
+	if (m_object == VK_NULL_HANDLE)
 	{
 		return;
 	}
 
-	if (m_apiObject != VK_NULL_HANDLE) 
+	if (m_object != VK_NULL_HANDLE) 
 	{
-		vmaDestroyBuffer(VulkanAllocator::Instance().GetVMA(), m_apiObject, m_vmaAllocation);
-		m_apiObject = VK_NULL_HANDLE;
+		vmaDestroyBuffer(VulkanAllocator::Instance().GetVMA(), m_object, m_vmaAllocation);
+		m_object = VK_NULL_HANDLE;
 		m_allocation = VmaAllocationInfo();
 		m_vmaAllocation = nullptr;
 	}
@@ -102,7 +102,7 @@ void VertexBufferObject::Reference(const VertexBufferObject& _other)
 	m_size = _other.GetSize();					// this strips the kMappedFlag
 	m_offsetInOtherBuffer = _other.GetOffset();	// this strips the kOwnedFlag
 	m_usage = _other.m_usage;
-	m_apiObject = _other.m_apiObject;
+	m_object = _other.m_object;
 
 	m_allocation = _other.m_allocation;
 
@@ -121,7 +121,7 @@ void VertexBufferObject::Reference(const VertexBufferObject& _other, uint32_t _r
 	m_size = _refSize;
 	m_offsetInOtherBuffer = _other.GetOffset() + _refOffset;
 	m_usage = _other.m_usage;
-	m_apiObject = _other.m_apiObject;
+	m_object = _other.m_object;
 	m_allocation = _other.m_allocation;
 
 	akAssertReturnVoid(!OwnsBuffer(), "Should not own this buffer now!");
@@ -129,7 +129,7 @@ void VertexBufferObject::Reference(const VertexBufferObject& _other, uint32_t _r
 
 void VertexBufferObject::Update(const void* _data, uint32_t _size, uint32_t _offset /*= 0*/) const
 {
-	akAssertReturnVoid(m_apiObject != VK_NULL_HANDLE, "BufferObject is not allocated");
+	akAssertReturnVoid(m_object != VK_NULL_HANDLE, "BufferObject is not allocated");
 	akAssertReturnVoid(AK_IS_ALIGNED(_data, 16), "Buffer not aligned to 16");
 	akAssertReturnVoid((GetOffset() & 15) == 0, "Offset not aligned to 16");
 	akAssertReturnVoid(_size < (uint32_t)GetSize(), "Size must be less of the total size than 0");
@@ -152,13 +152,13 @@ void VertexBufferObject::Update(const void* _data, uint32_t _size, uint32_t _off
 		bufferCopy.dstOffset = (GetOffset() + _offset);
 		bufferCopy.size = _size;
 
-		vkCmdCopyBuffer(commandBuffer, stageBuffer, m_apiObject, 1, &bufferCopy);
+		vkCmdCopyBuffer(commandBuffer, stageBuffer, m_object, 1, &bufferCopy);
 	}
 }
 
 void* VertexBufferObject::MapBuffer(EBufferMappingType _mapType)
 {
-	akAssertReturnValue(m_apiObject != VK_NULL_HANDLE, nullptr, "Buffer must be allocated");
+	akAssertReturnValue(m_object != VK_NULL_HANDLE, nullptr, "Buffer must be allocated");
 	akAssertReturnValue(m_usage != EBufferUsage::EBufferUsage_Static, nullptr, "Cannot map static buffer");
 
 	void* buffer = (uint8_t*)m_allocation.pMappedData + GetOffset();
@@ -172,7 +172,7 @@ void* VertexBufferObject::MapBuffer(EBufferMappingType _mapType)
 
 void VertexBufferObject::UnmapBuffer()
 {
-	akAssertReturnVoid(m_apiObject != VK_NULL_HANDLE, "Buffer must be allocated");
+	akAssertReturnVoid(m_object != VK_NULL_HANDLE, "Buffer must be allocated");
 	akAssertReturnVoid(m_usage != EBufferUsage::EBufferUsage_Static, "Cannot unmap static buffer");
 
 	SetUnmapped();
@@ -182,7 +182,7 @@ void VertexBufferObject::ClearWithoutFreeing()
 {
 	m_size = 0;
 	m_offsetInOtherBuffer = kOwnedFlag;
-	m_apiObject = VK_NULL_HANDLE;
+	m_object = VK_NULL_HANDLE;
 	m_allocation = VmaAllocationInfo();
 	m_vmaAllocation = nullptr;
 }

@@ -62,6 +62,7 @@
 #include "Renderer/Buffers/BaseBufferObject.h"
 #include "Renderer/Buffers/VertexBufferObject.h"
 #include "Renderer/Buffers/IndexBufferObject.h"
+#include "Renderer/CommandBuffer.h"
 
 
 //////////////////////////////////////////////////////////////////////////

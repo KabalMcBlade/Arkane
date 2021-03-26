@@ -487,6 +487,7 @@
     <ClInclude Include="Geometry\Frustum.h" />
     <ClInclude Include="Renderer\Buffers\IndexBufferObject.h" />
     <ClInclude Include="Renderer\Buffers\BaseBufferObject.h" />
+    <ClInclude Include="Renderer\CommandBuffer.h" />
     <ClInclude Include="Renderer\CommandPool.h" />
     <ClInclude Include="Renderer\FrameBuffer.h" />
     <ClInclude Include="Renderer\PipelineCache.h" />
@@ -519,6 +520,7 @@
     <ClCompile Include="ECS\Managers\EntityManager.cpp" />
     <ClCompile Include="Events\EventManager.cpp" />
     <ClCompile Include="Renderer\Buffers\IndexBufferObject.cpp" />
+    <ClCompile Include="Renderer\CommandBuffer.cpp" />
     <ClCompile Include="Renderer\CommandPool.cpp" />
     <ClCompile Include="Renderer\FrameBuffer.cpp" />
     <ClCompile Include="Renderer\PipelineCache.cpp" />

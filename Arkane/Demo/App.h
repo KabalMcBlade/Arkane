@@ -40,6 +40,7 @@ public:
 
 private:
 	bool CreateGraphicPipeline();
+	bool RecordCommandBuffers();
 
 private:
 	VkSurfaceKHR m_surface;

@@ -67,7 +67,7 @@ void App::InitWindow()
 void App::InitEngine()
 {
 	bool result = CreateGraphicPipeline();
-	akAssertReturnVoid(result == true, "Impossible finalize the Graphic Pipeline creation!");
+	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
 }
 
 bool App::CreateGraphicPipeline()
@@ -76,8 +76,8 @@ bool App::CreateGraphicPipeline()
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE SHADERS
-	std::string vertpath = m_fileSystem->GetShadersPath() + "Simple.vert.spv";
-	std::string fragpath = m_fileSystem->GetShadersPath() + "Simple.frag.spv";
+	std::string vertpath = m_fileSystem->GetShadersPath() + "BasicTriangleTest.vert.spv";
+	std::string fragpath = m_fileSystem->GetShadersPath() + "BasicTriangleTest.frag.spv";
 
 	SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
 	SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
@@ -144,9 +144,7 @@ bool App::CreateGraphicPipeline()
 	m_renderPass->PushAttachmentDescription(colorAttachment);
 	m_renderPass->PushSubpassDependency(dependency);
 	m_renderPass->PushSubpassDescription(subpass);
-
-	// NOTE: the FrameBuffer is need it ONLY for the m_renderPass.GetBeginInfo()
-	//m_renderPass.SetFrameBuffer(m_framebuffer);
+	//m_renderPass->SetFrameBuffer(m_framebuffer);		// NEVER CALL THIS FUNCTION HERE! CALL FROM CommandBuffer!
 
 	result = m_renderPass->Create();
 	akAssertReturnValue(result == true, false, "Cannot create RenderPass.");
@@ -183,8 +181,33 @@ bool App::CreateGraphicPipeline()
 	return result;
 }
 
+bool App::RecordCommandBuffers()
+{
+	bool result = true;
+	for (size_t i = 0; i < m_commandBuffers.size(); i++)
+	{
+		result = m_commandBuffers[i]->Begin();
+		akAssertReturnValue(result == true, false, "Cannot begin command buffer.");
+
+		m_commandBuffers[i]->BeginRenderPass(m_renderPass, m_frameBuffers[i]->GetFrameBuffer());
+		
+		m_commandBuffers[i]->BindPipeline(m_pipeline);
+		m_commandBuffers[i]->Draw(3, 1, 0, 0);
+		
+		m_commandBuffers[i]->EndRenderPass();
+
+		result = m_commandBuffers[i]->End();
+		akAssertReturnValue(result == true, false, "Failed to record command buffer.");
+	}
+
+	return result;
+}
+
 void App::MainLoop()
 {
+	bool result = RecordCommandBuffers();
+	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
+
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();

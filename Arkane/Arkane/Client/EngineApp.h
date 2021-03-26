@@ -27,6 +27,7 @@ class Pipeline;
 class PipelineCache;
 class FrameBuffer;
 class CommandPool;
+class CommandBuffer;
 class AK_DLL EngineApp
 {
 public:
@@ -67,6 +68,7 @@ protected:
 	SharedPtr<PipelineCache> m_pipelineCache;
 	SharedPtr<Pipeline> m_pipeline;
 	std::vector<SharedPtr<FrameBuffer>> m_frameBuffers;
+	std::vector<SharedPtr<CommandBuffer>> m_commandBuffers;
 
 	VkPhysicalDeviceFeatures m_enabledFeatures;
 	const char* m_name;

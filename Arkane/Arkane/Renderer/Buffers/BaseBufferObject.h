@@ -25,16 +25,17 @@ enum class EBufferUsage
 class BaseBufferObject
 {
 public:
-	BaseBufferObject() : m_size(0), m_offsetInOtherBuffer(0), m_usage(EBufferUsage::EBufferUsage_Dynamic), m_apiObject(VK_NULL_HANDLE), m_vmaAllocation(nullptr), m_allocation({})  {}
+	BaseBufferObject() : m_size(0), m_offsetInOtherBuffer(0), m_usage(EBufferUsage::EBufferUsage_Dynamic), m_object(VK_NULL_HANDLE), m_vmaAllocation(nullptr), m_allocation({})  {}
 	~BaseBufferObject() {}
 
 	AK_INLINE int32_t GetSize() const { return (m_size & ~kMappedFlag); }
-	int32_t GetAllocedSize() const { return ((m_size & ~kMappedFlag) + 15) & ~15; }
-	EBufferUsage GetUsage() const { return m_usage; }
-	VkBuffer GetAPIObject() const { return m_apiObject; }
-	int32_t GetOffset() const { return (m_offsetInOtherBuffer & ~kOwnedFlag); }
+	AK_INLINE int32_t GetAllocedSize() const { return ((m_size & ~kMappedFlag) + 15) & ~15; }
+	AK_INLINE EBufferUsage GetUsage() const { return m_usage; }
+	AK_INLINE VkBuffer GetBufferObject() const { return m_object; }
+	AK_INLINE const VkBuffer* GetBufferObjectPtr() const { return &m_object; }
+	AK_INLINE int32_t GetOffset() const { return (m_offsetInOtherBuffer & ~kOwnedFlag); }
 
-	bool IsMapped() const { return (m_size & kMappedFlag) != 0; }
+	AK_INLINE bool IsMapped() const { return (m_size & kMappedFlag) != 0; }
 
 protected:
 	void SetMapped() const { const_cast<int32_t&>(m_size) |= kMappedFlag; }
@@ -46,7 +47,7 @@ protected:
 	int32_t m_offsetInOtherBuffer;	// offset in bytes
 	EBufferUsage m_usage;
 
-	VkBuffer m_apiObject;
+	VkBuffer m_object;
 
 	VmaAllocation m_vmaAllocation;
 	VmaAllocationInfo m_allocation;
