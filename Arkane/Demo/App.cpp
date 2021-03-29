@@ -19,8 +19,11 @@ static void KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _actio
 
 void App::InitWindow()
 {
-	m_commandLine->GetValue("-width", m_width);
-	m_commandLine->GetValue("-height", m_height);
+	uint32_t width;
+	uint32_t height;
+
+	m_commandLine->GetValue("-width", width);
+	m_commandLine->GetValue("-height", height);
 
 	glfwInit();
 
@@ -28,7 +31,7 @@ void App::InitWindow()
 	akAssertReturnVoid(isVulkanSupported == GLFW_TRUE, "No Vulkan Support.");
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
 	bool fullScreen;
 	m_commandLine->GetValue("-fullscreen", fullScreen);
@@ -38,11 +41,11 @@ void App::InitWindow()
 
 	if (fullScreen)
 	{
-		m_window = glfwCreateWindow(m_width, m_height, m_name, glfwGetPrimaryMonitor(), nullptr);
+		m_window = glfwCreateWindow(width, height, m_name, glfwGetPrimaryMonitor(), nullptr);
 	}
 	else
 	{
-		m_window = glfwCreateWindow(m_width, m_height, m_name, nullptr, nullptr);
+		m_window = glfwCreateWindow(width, height, m_name, nullptr, nullptr);
 	}
 
 	if (!showcursor)
@@ -50,7 +53,7 @@ void App::InitWindow()
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
-	glfwGetFramebufferSize(m_window, &m_frameWidth, &m_frameheight);
+	glfwGetFramebufferSize(m_window, &m_frameWidth, &m_frameHeight);
 
 	glfwSetKeyCallback(m_window, KeyCallback);
 
@@ -138,7 +141,7 @@ bool App::CreateGraphicPipeline()
 	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
-	m_renderPass->SetDimensions(m_width, m_height);
+	m_renderPass->SetDimensions(m_frameWidth, m_frameHeight);
 	m_renderPass->SetOffset(0, 0);
 	m_renderPass->PushColorDepthStencilClearValue(0.0f, 0.0f, 0.0f, 1.0f);
 	m_renderPass->PushAttachmentDescription(colorAttachment);
@@ -190,10 +193,10 @@ bool App::RecordCommandBuffers()
 		akAssertReturnValue(result == true, false, "Cannot begin command buffer.");
 
 		m_commandBuffers[i]->BeginRenderPass(m_renderPass, m_frameBuffers[i]->GetFrameBuffer());
-		
+
 		m_commandBuffers[i]->BindPipeline(m_pipeline);
 		m_commandBuffers[i]->Draw(3, 1, 0, 0);
-		
+
 		m_commandBuffers[i]->EndRenderPass();
 
 		result = m_commandBuffers[i]->End();
@@ -212,6 +215,16 @@ void App::MainLoop()
 	{
 		glfwPollEvents();
 		DrawFrame();
+	}
+}
+
+void App::Recreate()
+{
+	glfwGetFramebufferSize(m_window, &m_frameWidth, &m_frameHeight);
+	while (m_frameWidth == 0 || m_frameHeight == 0)
+	{
+		glfwGetFramebufferSize(m_window, &m_frameWidth, &m_frameHeight);
+		glfwWaitEvents();
 	}
 }
 

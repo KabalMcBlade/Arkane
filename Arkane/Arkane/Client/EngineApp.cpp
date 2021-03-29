@@ -58,7 +58,7 @@ void EngineApp::InternalInitEngine()
 
 	VulkanAllocator::Instance().CreateVMA(m_device);
 
-	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetWidth(), GetHeight());
+	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetFrameWidth(), GetFrameHeight());
 
 	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
 
@@ -79,7 +79,7 @@ void EngineApp::InternalMainLoop()
 	m_frameBuffers.resize(count);
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
 	{
-		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetWidth(), GetHeight(), 1);
+		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetFrameWidth(), GetFrameHeight(), 1);
 		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
 		m_frameBuffers[i]->Create();
 	}
@@ -110,7 +110,7 @@ void EngineApp::DrawFrame()
 		// OK, keep to show it.
 		break;
 	case Arkane::EFrameStatus_NeedUpdate:
-		Recreate();
+		InternalRecreate();
 		break;
 	case Arkane::EFrameStatus_Error:
 		akAssertReturnVoid(false, "Drawing Error!");
@@ -120,9 +120,73 @@ void EngineApp::DrawFrame()
 	}
 }
 
-void EngineApp::Recreate()
-{
 
+void EngineApp::InternalRecreate()
+{
+	Recreate();
+
+	vkDeviceWaitIdle(m_device->GetDevice());
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CLEAN UP
+
+	// I need to manually force the delete because I need this order!
+	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)
+	{
+		m_commandBuffers[i].reset();
+	}
+	m_commandBuffers.clear();
+
+	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_frameBuffers.size(); ++i)
+	{
+		m_frameBuffers[i].reset();
+	}
+	m_frameBuffers.clear();
+
+	m_pipeline.reset();
+	m_pipelineCache.reset();
+	m_renderPass.reset();
+
+	m_commandPool.reset();
+
+	m_swapchain.reset();
+
+	//////////////////////////////////////////////////////////////////////////
+	// RECREATION 
+	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetFrameWidth(), GetFrameHeight());
+
+	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
+
+	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
+	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
+	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
+
+
+	InitEngine();
+
+
+	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+
+	m_frameBuffers.resize(count);
+	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
+	{
+		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetFrameWidth(), GetFrameHeight(), 1);
+		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
+		m_frameBuffers[i]->Create();
+	}
+
+	m_commandBuffers.resize(count);
+	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < count; ++i)
+	{
+		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
+	}
+
+	m_frame = MakeSharedPtr<Frame>(m_device, m_swapchain);
+
+
+	bool result = RecordCommandBuffers();
+	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
 }
 
 void EngineApp::InternalCleanup()

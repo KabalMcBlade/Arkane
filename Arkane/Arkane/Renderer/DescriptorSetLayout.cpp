@@ -33,6 +33,7 @@ VkShaderStageFlags DescriptorSetLayout::ConvertDescriptorStage(EDescriptorStage 
 		break;
 	default:
 		akAssertReturnValue(false, VK_SHADER_STAGE_VERTEX_BIT, "Cannot convert from EDescriptorStage to VkShaderStageFlags");
+		return VK_SHADER_STAGE_VERTEX_BIT;
 		break;
 	}
 }
@@ -52,6 +53,7 @@ VkDescriptorType DescriptorSetLayout::ConvertBindingType(EBindingType _type)
 		break;
 	default:
 		akAssertReturnValue(false, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, "Cannot convert from EBindingType to VkDescriptorType");
+		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		break;
 	}
 }

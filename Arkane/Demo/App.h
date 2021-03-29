@@ -17,38 +17,33 @@ public:
 	, m_surface(0)
 	, m_window(nullptr) 
 	, m_frameWidth(0)
-	, m_frameheight(0)
-	, m_width(0)
-	, m_height(0) {}
+	, m_frameHeight(0) {}
 	~App() {}
 
 	AK_INLINE const GLFWwindow& GetWindow() const { return *m_window; }
 
 
 	virtual int32_t GetFrameWidth() const override { return m_frameWidth; }
-	virtual int32_t GetFrameHeight() const override { return m_frameheight; }
-
-	virtual uint32_t GetWidth() const override { return m_width; }
-	virtual uint32_t GetHeight() const override { return m_height; }
+	virtual int32_t GetFrameHeight() const override { return m_frameHeight; }
 
 	virtual const VkSurfaceKHR& GetSurafe() const override { return m_surface; }
+
+	virtual bool RecordCommandBuffers() override;
 
 	virtual void InitWindow() override;
 	virtual void InitEngine() override;
 	virtual void MainLoop() override;
 	virtual void Cleanup() override;
+	virtual void Recreate() override;
 
 private:
 	bool CreateGraphicPipeline();
-	bool RecordCommandBuffers();
 
 private:
 	VkSurfaceKHR m_surface;
 	GLFWwindow* m_window;
 
 	int32_t m_frameWidth;
-	int32_t m_frameheight;
-	uint32_t m_width;
-	uint32_t m_height;
+	int32_t m_frameHeight;
 };
 

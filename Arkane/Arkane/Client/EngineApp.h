@@ -39,26 +39,29 @@ public:
 
 protected:
 	virtual const VkSurfaceKHR& GetSurafe() const = 0;
-	virtual uint32_t GetWidth() const = 0;
-	virtual uint32_t GetHeight() const = 0;
 	virtual int32_t GetFrameWidth() const = 0;
 	virtual int32_t GetFrameHeight() const = 0;
+
+	// custom command buffers creation on the App side
+	virtual bool RecordCommandBuffers() = 0;
+
 
 protected:
 	virtual void InitWindow() {}
 	virtual void InitEngine() {}
 	virtual void MainLoop() {}
 	virtual void Cleanup() {}
+	virtual void Recreate() {}
 
 protected:
 	void DrawFrame();
-	void Recreate();
 
 private:
 	void InternalInitWindow();
 	void InternalInitEngine();
 	void InternalMainLoop();
 	void InternalCleanup();
+	void InternalRecreate();
 
 
 protected:

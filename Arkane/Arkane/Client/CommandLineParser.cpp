@@ -21,7 +21,7 @@ void OptionValueInteger::SetDefault(int32_t _value)
 
 void OptionValueInteger::Parse()
 {
-	m_value = stoi(m_stringValue);
+	m_value = m_stringValue.empty() ? 0 : stoi(m_stringValue);
 }
 
 
@@ -35,7 +35,7 @@ void OptionValueUnsigned::SetDefault(uint32_t _value)
 
 void OptionValueUnsigned::Parse()
 {
-	m_value = stoi(m_stringValue);
+	m_value = m_stringValue.empty() ? 0 : stoi(m_stringValue);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ void OptionValueFloat::SetDefault(float _value)
 
 void OptionValueFloat::Parse()
 {
-	m_value = stof(m_stringValue);
+	m_value = m_stringValue.empty() ? 0.0f : stof(m_stringValue);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,9 +75,16 @@ void OptionValueBool::SetDefault(bool _value)
 
 void OptionValueBool::Parse()
 {
-	std::transform(m_stringValue.begin(), m_stringValue.end(), m_stringValue.begin(), ::tolower);
-	std::istringstream is(m_stringValue);
-	is >> std::boolalpha >> m_value;
+	if (!m_stringValue.empty())
+	{
+		std::transform(m_stringValue.begin(), m_stringValue.end(), m_stringValue.begin(), ::tolower);
+		std::istringstream is(m_stringValue);
+		is >> std::boolalpha >> m_value;
+	}
+	else
+	{
+		m_value = false;
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

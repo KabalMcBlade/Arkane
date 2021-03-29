@@ -82,7 +82,7 @@ Shader::~Shader()
 	if (m_device != VK_NULL_HANDLE && m_module != VK_NULL_HANDLE)
 	{
 		vkDestroyShaderModule(m_device->GetDevice(), m_module, VulkanAllocator::Instance().GetCallbacks());
-		m_module = VK_NULL_HANDLE;
+		//m_module = VK_NULL_HANDLE;
 	}
 }
 
