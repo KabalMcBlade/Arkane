@@ -28,6 +28,7 @@ class PipelineCache;
 class FrameBuffer;
 class CommandPool;
 class CommandBuffer;
+class Frame;
 class AK_DLL EngineApp
 {
 public:
@@ -49,6 +50,10 @@ protected:
 	virtual void MainLoop() {}
 	virtual void Cleanup() {}
 
+protected:
+	void DrawFrame();
+	void Recreate();
+
 private:
 	void InternalInitWindow();
 	void InternalInitEngine();
@@ -67,6 +72,7 @@ protected:
 	SharedPtr<RenderPass> m_renderPass;
 	SharedPtr<PipelineCache> m_pipelineCache;
 	SharedPtr<Pipeline> m_pipeline;
+	SharedPtr<Frame> m_frame;
 	std::vector<SharedPtr<FrameBuffer>> m_frameBuffers;
 	std::vector<SharedPtr<CommandBuffer>> m_commandBuffers;
 

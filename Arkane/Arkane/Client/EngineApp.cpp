@@ -14,6 +14,7 @@
 #include "../Renderer/CommandPool.h"
 #include "../Renderer/StagingManager.h"
 #include "../Renderer/CommandBuffer.h"
+#include "../Renderer/Frame.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -74,7 +75,7 @@ void EngineApp::InternalInitEngine()
 void EngineApp::InternalMainLoop()
 {
 	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
-	
+
 	m_frameBuffers.resize(count);
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
 	{
@@ -89,7 +90,39 @@ void EngineApp::InternalMainLoop()
 		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
 
+	m_frame = MakeSharedPtr<Frame>(m_device, m_swapchain);
+
+
 	MainLoop();		// this has the loop
+
+
+	vkDeviceWaitIdle(m_device->GetDevice());
+
+	m_frame.reset();
+}
+
+void EngineApp::DrawFrame()
+{
+	EFrameStatus status = m_frame->Draw(m_swapchain, m_commandBuffers);
+	switch (status)
+	{
+	case Arkane::EFrameStatus_Success:
+		// OK, keep to show it.
+		break;
+	case Arkane::EFrameStatus_NeedUpdate:
+		Recreate();
+		break;
+	case Arkane::EFrameStatus_Error:
+		akAssertReturnVoid(false, "Drawing Error!");
+		break;
+	default:
+		break;
+	}
+}
+
+void EngineApp::Recreate()
+{
+
 }
 
 void EngineApp::InternalCleanup()

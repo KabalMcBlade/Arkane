@@ -484,6 +484,7 @@
     <ClInclude Include="ECS\Managers\EntityManager.h" />
     <ClInclude Include="Events\Event.h" />
     <ClInclude Include="Events\EventManager.h" />
+    <ClInclude Include="Renderer\Frame.h" />
     <ClInclude Include="Geometry\Frustum.h" />
     <ClInclude Include="Renderer\Buffers\IndexBufferObject.h" />
     <ClInclude Include="Renderer\Buffers\BaseBufferObject.h" />
@@ -519,6 +520,7 @@
     <ClCompile Include="ECS\Managers\SystemManager.cpp" />
     <ClCompile Include="ECS\Managers\EntityManager.cpp" />
     <ClCompile Include="Events\EventManager.cpp" />
+    <ClCompile Include="Renderer\Frame.cpp" />
     <ClCompile Include="Renderer\Buffers\IndexBufferObject.cpp" />
     <ClCompile Include="Renderer\CommandBuffer.cpp" />
     <ClCompile Include="Renderer\CommandPool.cpp" />

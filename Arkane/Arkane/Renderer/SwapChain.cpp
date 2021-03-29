@@ -7,6 +7,8 @@
 #include "../Core/Assertions.h"
 #include "../Core/VulkanAllocator.h"
 
+#include "Frame.h"	// just for frames of flights static value
+
 
 AK_NAMESPACE_BEGIN
 
@@ -164,6 +166,8 @@ bool SwapChain::CreateSwapChainImageViews()
 		VkResult result = vkCreateImageView(m_device->GetDevice(), &viewInfo, VulkanAllocator::Instance().GetCallbacks(), &m_swapChainImageViews[i]);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot get swap chain image");
 	}
+
+	Frame::kNumOfFramesInFlight = m_swapChainImages.size();
 
 	return true;
 }

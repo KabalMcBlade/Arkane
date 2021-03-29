@@ -63,6 +63,7 @@
 #include "Renderer/Buffers/VertexBufferObject.h"
 #include "Renderer/Buffers/IndexBufferObject.h"
 #include "Renderer/CommandBuffer.h"
+#include "Renderer/Frame.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -99,8 +99,8 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 			akAssertReturnVoid(result == VK_SUCCESS, "Cannot create logical device");
 
 			vkGetDeviceQueue(m_device, m_queueFamily->GetGraphicsFamily(), 0, &m_graphicsQueue);
-			vkGetDeviceQueue(m_device, m_queueFamily->GetComputeFamily(), 0, &m_presentQueue);
-			vkGetDeviceQueue(m_device, m_queueFamily->GetPresentFamily(), 0, &m_computeQueue);
+			vkGetDeviceQueue(m_device, m_queueFamily->GetComputeFamily(), 0, &m_computeQueue);
+			vkGetDeviceQueue(m_device, m_queueFamily->GetPresentFamily(), 0, &m_presentQueue);
 
 			vkGetPhysicalDeviceProperties(m_physicalDevice, &m_physicalDeviceProperties);
 

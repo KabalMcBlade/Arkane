@@ -36,7 +36,7 @@ public:
 
 	bool RecreateSwapChain();
 
-	AK_INLINE operator VkSwapchainKHR() const { return m_swapChain; }
+	AK_INLINE VkSwapchainKHR GetSwapChain() const { return m_swapChain; }
 
 	AK_INLINE const std::vector<VkImageView>& GetImageViews() const { return m_swapChainImageViews; }
 	AK_INLINE const VkImageView& GetImageView(size_t _index) const { return m_swapChainImageViews[_index]; }

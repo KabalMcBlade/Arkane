@@ -211,6 +211,7 @@ void App::MainLoop()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();
+		DrawFrame();
 	}
 }
 
