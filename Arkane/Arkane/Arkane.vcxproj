@@ -507,6 +507,7 @@
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Shaders\ShaderManager.h" />
     <ClInclude Include="Renderer\StagingManager.h" />
+    <ClInclude Include="Renderer\Buffers\UniformBufferObject.h" />
     <ClInclude Include="Utilities\Hash.h" />
     <ClInclude Include="Renderer\Buffers\VertexBufferObject.h" />
   </ItemGroup>
@@ -541,6 +542,7 @@
     <ClCompile Include="Shaders\ShaderManager.cpp" />
     <ClCompile Include="Renderer\StagingManager.cpp" />
     <ClCompile Include="Renderer\Buffers\VertexBufferObject.cpp" />
+    <ClCompile Include="Renderer\Buffers\UniformBufferObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\glm\glm\detail\func_common.inl" />
