@@ -15,6 +15,10 @@
 #include "../Renderer/StagingManager.h"
 #include "../Renderer/CommandBuffer.h"
 #include "../Renderer/Frame.h"
+#include "../Renderer/Buffers/VertexBufferObject.h"
+#include "../Renderer/Buffers/IndexBufferObject.h"
+#include "../Renderer/DescriptorSetLayout.h"
+#include "../Renderer/PipelineLayout.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -68,6 +72,13 @@ void EngineApp::InternalInitEngine()
 
 	StagingManager::Instance().Init(m_device, m_swapchain);
 
+	// Before InitEngine since there is the allocation over there!
+	m_vbo = MakeSharedPtr<VertexBufferObject>();
+	m_ibo = MakeSharedPtr<IndexBufferObject>();
+
+	m_descriptorSetLayout = MakeSharedPtr<DescriptorSetLayout>(m_device);
+	m_pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, m_descriptorSetLayout);
+
 	// here should be custom initialization and also set the render pass
 	InitEngine();
 }
@@ -101,11 +112,11 @@ void EngineApp::InternalMainLoop()
 	m_frame.reset();
 }
 
-void EngineApp::DrawFrame()
+void EngineApp::BeginFrame()
 {
 	StagingManager::Instance().Flush();
 
-	EFrameStatus status = m_frame->Draw(m_swapchain, m_commandBuffers);
+	EFrameStatus status = m_frame->BeginDraw(m_swapchain);
 	switch (status)
 	{
 	case Arkane::EFrameStatus_Success:
@@ -122,6 +133,24 @@ void EngineApp::DrawFrame()
 	}
 }
 
+void EngineApp::EndFrame()
+{
+	EFrameStatus status = m_frame->EndDraw(m_swapchain, m_commandBuffers);
+	switch (status)
+	{
+	case Arkane::EFrameStatus_Success:
+		// OK, keep to show it.
+		break;
+	case Arkane::EFrameStatus_NeedUpdate:
+		InternalRecreate();
+		break;
+	case Arkane::EFrameStatus_Error:
+		akAssertReturnVoid(false, "Drawing Error!");
+		break;
+	default:
+		break;
+	}
+}
 
 void EngineApp::InternalRecreate()
 {
@@ -132,6 +161,13 @@ void EngineApp::InternalRecreate()
 
 	//////////////////////////////////////////////////////////////////////////
 	// CLEAN UP
+	m_pipelineLayout.reset();
+	m_descriptorSetLayout.reset();
+
+	m_vbo->FreeBufferObject();
+	m_vbo.reset();
+	m_ibo->FreeBufferObject();
+	m_ibo.reset();
 
 	// I need to manually force the delete because I need this order!
 	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)
@@ -165,10 +201,16 @@ void EngineApp::InternalRecreate()
 	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
 
 
+	// Before InitEngine since there is the allocation over there!
+	m_vbo = MakeSharedPtr<VertexBufferObject>();
+	m_ibo = MakeSharedPtr<IndexBufferObject>();
+
+	m_descriptorSetLayout = MakeSharedPtr<DescriptorSetLayout>(m_device);
+	m_pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, m_descriptorSetLayout);
+
 	InitEngine();
 
-
-	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+	size_t count = m_swapchain->GetImageViewsCount();
 
 	m_frameBuffers.resize(count);
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
@@ -194,6 +236,14 @@ void EngineApp::InternalRecreate()
 void EngineApp::InternalCleanup()
 {
 	StagingManager::Instance().Shutdown();
+
+	m_pipelineLayout.reset();
+	m_descriptorSetLayout.reset();
+
+	m_vbo->FreeBufferObject();
+	m_vbo.reset();
+	m_ibo->FreeBufferObject();
+	m_ibo.reset();
 
 	// I need to manually force the delete because I need this order!
 	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)

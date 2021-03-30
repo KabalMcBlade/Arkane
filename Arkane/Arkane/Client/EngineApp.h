@@ -29,6 +29,10 @@ class FrameBuffer;
 class CommandPool;
 class CommandBuffer;
 class Frame;
+class VertexBufferObject;
+class IndexBufferObject;
+class DescriptorSetLayout;
+class PipelineLayout;
 class AK_DLL EngineApp
 {
 public:
@@ -54,7 +58,8 @@ protected:
 	virtual void Recreate() {}
 
 protected:
-	void DrawFrame();
+	void BeginFrame();
+	void EndFrame();
 
 private:
 	void InternalInitWindow();
@@ -76,6 +81,10 @@ protected:
 	SharedPtr<PipelineCache> m_pipelineCache;
 	SharedPtr<Pipeline> m_pipeline;
 	SharedPtr<Frame> m_frame;
+	SharedPtr<VertexBufferObject> m_vbo;
+	SharedPtr<IndexBufferObject> m_ibo;
+	SharedPtr<DescriptorSetLayout> m_descriptorSetLayout;
+	SharedPtr<PipelineLayout> m_pipelineLayout;
 	std::vector<SharedPtr<FrameBuffer>> m_frameBuffers;
 	std::vector<SharedPtr<CommandBuffer>> m_commandBuffers;
 

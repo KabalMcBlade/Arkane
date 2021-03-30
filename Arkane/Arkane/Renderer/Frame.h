@@ -34,7 +34,10 @@ public:
 	Frame(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapChain);
 	~Frame();
 
-	EFrameStatus Draw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<CommandBuffer>>& _commandBuffers);
+	AK_INLINE uint32_t GetCurrentImageIndex() const { return m_imageIndex; }
+
+	EFrameStatus BeginDraw(SharedPtr<SwapChain> _swapChain);
+	EFrameStatus EndDraw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<CommandBuffer>>& _commandBuffers);
 
 private:
 	SharedPtr<Device> m_device;
@@ -43,7 +46,8 @@ private:
 	std::vector<VkSemaphore> m_renderFinishedSemaphores;
 	std::vector<VkFence> m_inFlightFences;
 	std::vector<VkFence> m_imagesInFlight;
-	size_t m_currentFrame = 0;
+	uint32_t m_imageIndex;
+	size_t m_currentFrame;
 };
 
 AK_NAMESPACE_END

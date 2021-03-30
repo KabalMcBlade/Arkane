@@ -15,6 +15,9 @@
 //#define GLM_FORCE_SS2
 #define GLM_FORCE_INTRINSICS
 #include "Dependencies/glm/glm/glm.hpp"
+#include "Dependencies/glm/glm/matrix.hpp"
+#include "Dependencies/glm/glm/ext/matrix_transform.hpp"
+#include "Dependencies/glm/glm/ext/matrix_clip_space.hpp"
 
 
 //////////////////////////////////////////////////////////////////////////

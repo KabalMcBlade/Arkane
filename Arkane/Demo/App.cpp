@@ -17,6 +17,39 @@ static void KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _actio
 
 //////////////////////////////////////////////////////////////////////////
 
+
+
+// CREATE VERTEX AND INDEX
+// TRIANGLE
+/*
+const std::vector<Vertex_C> _vertices =
+{
+	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+	{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+	{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+};
+
+const std::vector<uint16_t> _indices = {
+	0, 1, 2
+};
+*/
+
+// RECTANGLE
+const std::vector<Vertex_C> _vertices =
+{
+	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+	{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+	{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+};
+
+const std::vector<uint16_t> _indices = {
+	0, 1, 2, 2, 3, 0
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+
 void App::InitWindow()
 {
 	uint32_t width;
@@ -74,36 +107,6 @@ void App::InitEngine()
 }
 
 
-//////////////////////////////////////////////////////////////////////////
-// CREATE VERTEX AND INDEX
-// TRIANGLE
-/*
-const std::vector<Vertex_C> _vertices =
-{
-	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-	{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-	{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
-};
-
-const std::vector<uint16_t> _indices = {
-	0, 1, 2
-};
-*/
-
-// RECTANGLE
-const std::vector<Vertex_C> _vertices =
-{
-	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
-    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
-    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
-};
-
-const std::vector<uint16_t> _indices = {
-	0, 1, 2, 2, 3, 0
-};
-//////////////////////////////////////////////////////////////////////////
-
 bool App::CreateGraphicPipeline()
 {
 	bool result = false;
@@ -130,12 +133,9 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEX BUFFER OBJECT
 	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
-
-	void* vboMemory = nullptr;
-	m_vbo = MakeSharedPtr<VertexBufferObject>();
 	if (m_vbo->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
 	{
-		vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+		void* vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
 		// Do not need to update because I have allocated memory directly (not pre allocated empty)
 		//m_vbo->Update(_vertices.data(), (uint32_t)sizeVertex);
@@ -148,12 +148,9 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE INDEX BUFFER OBJECT
 	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
-
-	void* iboMemory = nullptr;
-	m_ibo = MakeSharedPtr<IndexBufferObject>();
 	if (m_ibo->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
 	{
-		iboMemory = m_ibo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+		void* iboMemory = m_ibo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
 		// Do not need to update because I have allocated memory directly (not pre allocated empty)
 		//m_ibo->Update(_indices.data(), (uint32_t)sizeIndex);
@@ -161,24 +158,21 @@ bool App::CreateGraphicPipeline()
 		m_ibo->UnmapBuffer();
 	}
 	//////////////////////////////////////////////////////////////////////////
-	
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE DESCRIPTORSETLAYOUT
-	SharedPtr<DescriptorSetLayout> layout = MakeSharedPtr<DescriptorSetLayout>(m_device);
-	layout->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
+	m_descriptorSetLayout->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
 
-	result = layout->Create();
+	result = m_descriptorSetLayout->Create();
 	akAssertReturnValue(result == true, false, "Cannot create DescriptorSetLayout.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE PIPELINE LAYOUT
-	SharedPtr<PipelineLayout> pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, layout);
-	//pipelineLayout->PushConstant();	// Optional, only if we have!
-	result = pipelineLayout->Create();
+	//m_pipelineLayout->PushConstant();	// Optional, only if we have!
+	result = m_pipelineLayout->Create();
 	akAssertReturnValue(result == true, false, "Cannot create PipelineLayout.");
 	//////////////////////////////////////////////////////////////////////////
 
@@ -241,7 +235,7 @@ bool App::CreateGraphicPipeline()
 	m_pipeline->PushColorBlendAttachment(VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, VK_FALSE);
 	m_pipeline->SetColorBlendAttachments();
 
-	m_pipeline->SetLayout(pipelineLayout);
+	m_pipeline->SetLayout(m_pipelineLayout);
 	m_pipeline->SetRenderPass(m_renderPass);
 	m_pipeline->SetCache(m_pipelineCache);
 
@@ -269,6 +263,7 @@ bool App::RecordCommandBuffers()
 
 		m_commandBuffers[i]->BindVertexBuffer(m_vbo, 0, 0);
 		m_commandBuffers[i]->BindIndexBuffer(m_ibo, VK_INDEX_TYPE_UINT16, 0);
+
 		m_commandBuffers[i]->DrawIndexed((uint32_t)_indices.size(), 1, 0, 0, 0);
 
 		m_commandBuffers[i]->EndRenderPass();
@@ -288,16 +283,21 @@ void App::MainLoop()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();
-		DrawFrame();
-	}
 
-	// probably is better in the Cleanup(), but Cleanup)( is called too late, check a new order
-	// This return a validation error, because the Buffer need to finish the full execution before freed! 
-	// Maybe need a pre/post clean up and pore/post of all the functions App has!
-	m_vbo->FreeBufferObject();	
-	//m_vbo.reset();
-	m_ibo->FreeBufferObject();	
-	//m_ibo.reset();
+		BeginFrame();
+		UpdateFrame();
+		EndFrame();
+	}
+}
+
+void App::UpdateFrame()
+{
+	static auto startTime = std::chrono::high_resolution_clock::now();
+
+	auto currentTime = std::chrono::high_resolution_clock::now();
+	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
+
+	uint32_t imageIndex = m_frame->GetCurrentImageIndex();
 }
 
 void App::Recreate()

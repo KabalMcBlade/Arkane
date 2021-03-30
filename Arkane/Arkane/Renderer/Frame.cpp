@@ -12,7 +12,7 @@ AK_NAMESPACE_BEGIN
 
 size_t Frame::kNumOfFramesInFlight = 0;
 
-Frame::Frame(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapChain) : m_device(_device)
+Frame::Frame(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapChain) : m_device(_device), m_currentFrame(0), m_imageIndex(0)
 {
 	m_imageAvailableSemaphores.resize(kNumOfFramesInFlight);
 	m_renderFinishedSemaphores.resize(kNumOfFramesInFlight);
@@ -49,25 +49,31 @@ Frame::~Frame()
 	}
 }
 
-EFrameStatus Frame::Draw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<CommandBuffer>>& _commandBuffers)
+EFrameStatus Frame::BeginDraw(SharedPtr<SwapChain> _swapChain)
 {
 	VkResult result = vkWaitForFences(m_device->GetDevice(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 	akAssertReturnValue(result == VK_SUCCESS, EFrameStatus::EFrameStatus_Error, "Cannot wait for fences");
 
-	uint32_t imageIndex;
-	result = vkAcquireNextImageKHR(m_device->GetDevice(), _swapChain->GetSwapChain(), UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &imageIndex);
+	result = vkAcquireNextImageKHR(m_device->GetDevice(), _swapChain->GetSwapChain(), UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &m_imageIndex);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_NOT_READY)
 	{
 		return EFrameStatus::EFrameStatus_NeedUpdate;
 	}
 
-	if (m_imagesInFlight[imageIndex] != VK_NULL_HANDLE) 
+	return EFrameStatus_Success;
+}
+
+EFrameStatus Frame::EndDraw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<CommandBuffer>>& _commandBuffers)
+{
+	VkResult result = VK_SUCCESS;
+
+	if (m_imagesInFlight[m_imageIndex] != VK_NULL_HANDLE)
 	{
-		result = vkWaitForFences(m_device->GetDevice(), 1, &m_imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+		result = vkWaitForFences(m_device->GetDevice(), 1, &m_imagesInFlight[m_imageIndex], VK_TRUE, UINT64_MAX);
 		akAssertReturnValue(result == VK_SUCCESS, EFrameStatus::EFrameStatus_Error, "Cannot wait for fences");
 	}
 
-	m_imagesInFlight[imageIndex] = m_inFlightFences[m_currentFrame];
+	m_imagesInFlight[m_imageIndex] = m_inFlightFences[m_currentFrame];
 
 	VkSubmitInfo submitInfo{};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -79,7 +85,7 @@ EFrameStatus Frame::Draw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<
 	submitInfo.pWaitDstStageMask = waitStages;
 
 	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &_commandBuffers[imageIndex]->GetCommandBuffer();
+	submitInfo.pCommandBuffers = &_commandBuffers[m_imageIndex]->GetCommandBuffer();
 
 	VkSemaphore signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 	submitInfo.signalSemaphoreCount = 1;
@@ -103,7 +109,7 @@ EFrameStatus Frame::Draw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<
 	presentInfo.swapchainCount = 1;
 	presentInfo.pSwapchains = swapChains;
 
-	presentInfo.pImageIndices = &imageIndex;
+	presentInfo.pImageIndices = &m_imageIndex;
 
 	result = vkQueuePresentKHR(m_device->GetPresentQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)

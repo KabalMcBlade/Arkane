@@ -38,13 +38,11 @@ public:
 
 private:
 	bool CreateGraphicPipeline();
+	void UpdateFrame();
 
 private:
 	VkSurfaceKHR m_surface;
 	GLFWwindow* m_window;
-
-	SharedPtr<VertexBufferObject> m_vbo;
-	SharedPtr<IndexBufferObject> m_ibo;
 
 	int32_t m_frameWidth;
 	int32_t m_frameHeight;
