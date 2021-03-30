@@ -68,6 +68,8 @@
 #include "Renderer/Buffers/UniformBufferObject.h"
 #include "Renderer/CommandBuffer.h"
 #include "Renderer/Frame.h"
+#include "Renderer/DescriptorPool.h"
+#include "Renderer/DescriptorSet.h"
 
 
 //////////////////////////////////////////////////////////////////////////
