@@ -116,7 +116,9 @@ bool App::CreateGraphicPipeline()
 	{
 		vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
-		m_vbo->Update(_vertices.data(), (uint32_t)size);
+		// Do not need to update because I have allocated memory directly (not pre allocated empty)
+		//m_vbo->Update(_vertices.data(), (uint32_t)size);
+
 		m_vbo->UnmapBuffer();
 	}
 	//////////////////////////////////////////////////////////////////////////
