@@ -43,6 +43,8 @@ private:
 	VkSurfaceKHR m_surface;
 	GLFWwindow* m_window;
 
+	SharedPtr<VertexBufferObject> m_vbo;
+
 	int32_t m_frameWidth;
 	int32_t m_frameHeight;
 };

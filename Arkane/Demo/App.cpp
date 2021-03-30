@@ -73,14 +73,25 @@ void App::InitEngine()
 	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+// CREATE VERTEX
+const std::vector<Vertex_C> _vertices =
+{
+	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+	{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+	{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+};
+//////////////////////////////////////////////////////////////////////////
+
 bool App::CreateGraphicPipeline()
 {
 	bool result = false;
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE SHADERS
-	std::string vertpath = m_fileSystem->GetShadersPath() + "BasicTriangleTest.vert.spv";
-	std::string fragpath = m_fileSystem->GetShadersPath() + "BasicTriangleTest.frag.spv";
+	std::string vertpath = m_fileSystem->GetShadersPath() + "Simple.vert.spv";
+	std::string fragpath = m_fileSystem->GetShadersPath() + "Simple.frag.spv";
 
 	SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
 	SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
@@ -90,6 +101,24 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEXDESCRIPTOR
 	SharedPtr<VertexDescriptor> vertex = MakeSharedPtr<VertexDescriptor>(EVertexLayout::EVertexLayout_C);
+	//////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE VERTEX BUFFER OBJECT
+	const size_t align = 16;
+	const size_t mask = align - 1;
+	const size_t size = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
+
+	void* vboMemory = nullptr;
+	m_vbo = MakeSharedPtr<VertexBufferObject>();
+	if (m_vbo->AllocBufferObject(_vertices.data(), (uint32_t)size, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+	{
+		vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+
+		m_vbo->Update(_vertices.data(), (uint32_t)size);
+		m_vbo->UnmapBuffer();
+	}
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -195,7 +224,9 @@ bool App::RecordCommandBuffers()
 		m_commandBuffers[i]->BeginRenderPass(m_renderPass, m_frameBuffers[i]->GetFrameBuffer());
 
 		m_commandBuffers[i]->BindPipeline(m_pipeline);
-		m_commandBuffers[i]->Draw(3, 1, 0, 0);
+
+		m_commandBuffers[i]->BindVertexBuffer(m_vbo, 0, 0);
+		m_commandBuffers[i]->Draw((uint32_t)_vertices.size(), 1, 0, 0);
 
 		m_commandBuffers[i]->EndRenderPass();
 
@@ -216,6 +247,12 @@ void App::MainLoop()
 		glfwPollEvents();
 		DrawFrame();
 	}
+
+	// probably is better in the Cleanup(), but Cleanup)( is called too late, check a new order
+	// This return a validation error, because the Buffer need to finish the full execution before freed! 
+	// Maybe need a pre/post clean up and pore/post of all the functions App has!
+	m_vbo->FreeBufferObject();	
+	//m_vbo.reset();
 }
 
 void App::Recreate()

@@ -132,7 +132,7 @@ void VertexBufferObject::Update(const void* _data, uint32_t _size, uint32_t _off
 	akAssertReturnVoid(m_object != VK_NULL_HANDLE, "BufferObject is not allocated");
 	akAssertReturnVoid(AK_IS_ALIGNED(_data, 16), "Buffer not aligned to 16");
 	akAssertReturnVoid((GetOffset() & 15) == 0, "Offset not aligned to 16");
-	akAssertReturnVoid(_size < (uint32_t)GetSize(), "Size must be less of the total size than 0");
+	akAssertReturnVoid(_size <= (uint32_t)GetSize(), "Size must be less or equal of the total size");
 
 	if (m_usage == EBufferUsage::EBufferUsage_Dynamic)
 	{

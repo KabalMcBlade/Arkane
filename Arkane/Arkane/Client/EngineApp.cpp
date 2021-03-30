@@ -103,6 +103,8 @@ void EngineApp::InternalMainLoop()
 
 void EngineApp::DrawFrame()
 {
+	StagingManager::Instance().Flush();
+
 	EFrameStatus status = m_frame->Draw(m_swapchain, m_commandBuffers);
 	switch (status)
 	{

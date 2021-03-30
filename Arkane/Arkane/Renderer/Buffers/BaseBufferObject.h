@@ -22,10 +22,10 @@ enum class EBufferUsage
 	EBufferUsage_Dynamic,	// GPU Read, CPU Read/Write
 };
 
-class BaseBufferObject
+class AK_DLL BaseBufferObject
 {
 public:
-	BaseBufferObject() : m_size(0), m_offsetInOtherBuffer(0), m_usage(EBufferUsage::EBufferUsage_Dynamic), m_object(VK_NULL_HANDLE), m_vmaAllocation(nullptr), m_allocation({})  {}
+	BaseBufferObject() : m_size(0), m_offsetInOtherBuffer(kOwnedFlag), m_usage(EBufferUsage::EBufferUsage_Dynamic), m_object(VK_NULL_HANDLE), m_vmaAllocation(nullptr), m_allocation({})  {}
 	~BaseBufferObject() {}
 
 	AK_INLINE int32_t GetSize() const { return (m_size & ~kMappedFlag); }

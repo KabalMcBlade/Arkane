@@ -7,7 +7,7 @@
 
 AK_NAMESPACE_BEGIN
 
-class VertexBufferObject : public BaseBufferObject
+class AK_DLL VertexBufferObject : public BaseBufferObject
 {
 public:
 	VertexBufferObject();

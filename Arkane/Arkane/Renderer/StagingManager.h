@@ -72,7 +72,6 @@ private:
 	VmaAllocation m_allocation;
 	VmaAllocationInfo m_allocationInfo;
 
-	VkDeviceMemory	m_memory;
 	VkCommandPool m_commandPool;
 
 	std::vector<StagingBuffer> m_buffers;

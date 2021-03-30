@@ -21,7 +21,6 @@ StagingManager::StagingManager() :
 	m_currentBuffer(0),
 	m_numFrames(0),
 	m_mappedData(nullptr),
-	m_memory(VK_NULL_HANDLE),
 	m_commandPool(VK_NULL_HANDLE),
 	m_allocationInfo({}),
 	m_allocation(nullptr)
@@ -51,7 +50,7 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 	allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;	// VMA_MEMORY_USAGE_GPU_ONLY;
 	allocInfo.requiredFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 	allocInfo.preferredFlags = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-	allocInfo.flags = VMA_ALLOCATION_CREATE_DONT_BIND_BIT;		// VMA_ALLOCATION_CREATE_MAPPED_BIT
+	allocInfo.flags = VMA_ALLOCATION_CREATE_DONT_BIND_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
 	VkResult result;
 	for (size_t i = 0; i < m_numFrames; ++i)
@@ -120,7 +119,6 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 void StagingManager::Shutdown()
 {
 	vmaUnmapMemory(VulkanAllocator::Instance().GetVMA(), m_allocation);
-	m_memory = VK_NULL_HANDLE;
 	m_mappedData = nullptr;
 
 	for (uint32_t i = 0; i < m_numFrames; ++i)
@@ -194,7 +192,7 @@ void StagingManager::Flush()
 
 	VkMappedMemoryRange memoryRange = {};
 	memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	memoryRange.memory = m_memory;
+	memoryRange.memory = m_allocationInfo.deviceMemory;
 	memoryRange.size = VK_WHOLE_SIZE;
 	vkFlushMappedMemoryRanges(m_device->GetDevice(), 1, &memoryRange);
 
