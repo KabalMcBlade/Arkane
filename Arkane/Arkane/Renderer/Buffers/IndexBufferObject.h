@@ -7,7 +7,7 @@
 
 AK_NAMESPACE_BEGIN
 
-class IndexBufferObject :  public BaseBufferObject
+class AK_DLL IndexBufferObject :  public BaseBufferObject
 {
 public:
 	IndexBufferObject();

@@ -75,12 +75,32 @@ void App::InitEngine()
 
 
 //////////////////////////////////////////////////////////////////////////
-// CREATE VERTEX
+// CREATE VERTEX AND INDEX
+// TRIANGLE
+/*
 const std::vector<Vertex_C> _vertices =
 {
 	{{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
 	{{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
 	{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}
+};
+
+const std::vector<uint16_t> _indices = {
+	0, 1, 2
+};
+*/
+
+// RECTANGLE
+const std::vector<Vertex_C> _vertices =
+{
+	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
+    {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+    {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}},
+    {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}
+};
+
+const std::vector<uint16_t> _indices = {
+	0, 1, 2, 2, 3, 0
 };
 //////////////////////////////////////////////////////////////////////////
 
@@ -104,24 +124,44 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 
 
-	//////////////////////////////////////////////////////////////////////////
-	// CREATE VERTEX BUFFER OBJECT
+
 	const size_t align = 16;
 	const size_t mask = align - 1;
-	const size_t size = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE VERTEX BUFFER OBJECT
+	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
 
 	void* vboMemory = nullptr;
 	m_vbo = MakeSharedPtr<VertexBufferObject>();
-	if (m_vbo->AllocBufferObject(_vertices.data(), (uint32_t)size, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+	if (m_vbo->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
 	{
 		vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
 		// Do not need to update because I have allocated memory directly (not pre allocated empty)
-		//m_vbo->Update(_vertices.data(), (uint32_t)size);
+		//m_vbo->Update(_vertices.data(), (uint32_t)sizeVertex);
 
 		m_vbo->UnmapBuffer();
 	}
 	//////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE INDEX BUFFER OBJECT
+	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
+
+	void* iboMemory = nullptr;
+	m_ibo = MakeSharedPtr<IndexBufferObject>();
+	if (m_ibo->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+	{
+		iboMemory = m_ibo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+
+		// Do not need to update because I have allocated memory directly (not pre allocated empty)
+		//m_ibo->Update(_indices.data(), (uint32_t)sizeIndex);
+
+		m_ibo->UnmapBuffer();
+	}
+	//////////////////////////////////////////////////////////////////////////
+	
 
 
 	//////////////////////////////////////////////////////////////////////////
@@ -228,7 +268,8 @@ bool App::RecordCommandBuffers()
 		m_commandBuffers[i]->BindPipeline(m_pipeline);
 
 		m_commandBuffers[i]->BindVertexBuffer(m_vbo, 0, 0);
-		m_commandBuffers[i]->Draw((uint32_t)_vertices.size(), 1, 0, 0);
+		m_commandBuffers[i]->BindIndexBuffer(m_ibo, VK_INDEX_TYPE_UINT16, 0);
+		m_commandBuffers[i]->DrawIndexed((uint32_t)_indices.size(), 1, 0, 0, 0);
 
 		m_commandBuffers[i]->EndRenderPass();
 
@@ -255,6 +296,8 @@ void App::MainLoop()
 	// Maybe need a pre/post clean up and pore/post of all the functions App has!
 	m_vbo->FreeBufferObject();	
 	//m_vbo.reset();
+	m_ibo->FreeBufferObject();	
+	//m_ibo.reset();
 }
 
 void App::Recreate()
