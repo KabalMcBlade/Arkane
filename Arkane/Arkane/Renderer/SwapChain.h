@@ -40,7 +40,7 @@ public:
 
 	AK_INLINE const std::vector<VkImageView>& GetImageViews() const { return m_swapChainImageViews; }
 	AK_INLINE const VkImageView& GetImageView(size_t _index) const { return m_swapChainImageViews[_index]; }
-	AK_INLINE const size_t GetImageViewsCount() const { return m_swapChainImageViews.size(); }
+	AK_INLINE size_t GetImageViewsCount() const { return m_swapChainImageViews.size(); }
 
 	AK_INLINE VkExtent2D GetExtent() const { return m_swapChainExtent; }
 	AK_INLINE VkFormat GetFormat() const { return m_swapChainImageFormat; }

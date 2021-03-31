@@ -7,7 +7,6 @@
 #include "../Renderer/QueueFamily.h"
 #include "../Renderer/Device.h"
 #include "../Renderer/Instance.h"
-#include "../Renderer/SwapChain.h"
 #include "../Renderer/RenderPass.h"
 #include "../Renderer/PipelineCache.h"
 #include "../Renderer/Pipeline.h"
@@ -17,9 +16,12 @@
 #include "../Renderer/CommandBuffer.h"
 #include "../Renderer/Buffers/VertexBufferObject.h"
 #include "../Renderer/Buffers/IndexBufferObject.h"
+#include "../Renderer/Buffers/UniformBufferObject.h"
 #include "../Renderer/DescriptorSetLayout.h"
 #include "../Renderer/PipelineLayout.h"
 #include "../Renderer/VertexDescriptor.h"
+#include "../Renderer/DescriptorPool.h"
+#include "../Renderer/DescriptorSet.h"
 
 #include "../Shaders/Shader.h"
 
@@ -53,7 +55,7 @@ void RenderManager::CreateCore(const VkSurfaceKHR& _surface, int32_t _frameWidth
 
 void RenderManager::CreateBuffers(int32_t _frameWidth, int32_t _frameHeight, uint32_t _layers /*= 1*/)
 {
-	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+	const size_t count = m_swapchain->GetImageViewsCount();
 
 	m_frameBuffers.resize(count);
 	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
@@ -68,7 +70,6 @@ void RenderManager::CreateBuffers(int32_t _frameWidth, int32_t _frameHeight, uin
 	{
 		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
 	}
-
 }
 
 void RenderManager::CreateFrame()
@@ -148,27 +149,61 @@ void RenderManager::InternalCreate(const VkSurfaceKHR& _surface, int32_t _frameW
 	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
 	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
 
+	m_descriptorPool = MakeSharedPtr<DescriptorPool>(m_device);
+
 	// TODO: These will moved in the VertexCache when I'll made it!
 	m_vbo = MakeSharedPtr<VertexBufferObject>();
 	m_ibo = MakeSharedPtr<IndexBufferObject>();
+
+	const size_t count = m_swapchain->GetImageViewsCount();
+	m_ubos.resize(count);
+	for (std::vector<SharedPtr<UniformBufferObject>>::size_type i = 0; i < count; ++i)
+	{
+		m_ubos[i] = MakeSharedPtr<UniformBufferObject>();
+	}
 	//
 
 	m_descriptorSetLayout = MakeSharedPtr<DescriptorSetLayout>(m_device);
 	m_pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, m_descriptorSetLayout);
+
+	m_descriptorSets.resize(count);
+	for (std::vector<SharedPtr<DescriptorSet>>::size_type i = 0; i < count; ++i)
+	{
+		m_descriptorSets[i] = MakeSharedPtr<DescriptorSet>(m_device);
+	}
 }
 
 void RenderManager::InternalDetroy()
 {
+	const size_t count = m_swapchain->GetImageViewsCount();
+
+	m_descriptorSets.resize(count);
+	for (std::vector<SharedPtr<DescriptorSet>>::size_type i = 0; i < count; ++i)
+	{
+		m_descriptorSets[i].reset();
+	}
+	m_descriptorSets.clear();
+
 	m_pipelineLayout.reset();
 	m_descriptorSetLayout.reset();
 
 
 	// TODO: These will moved in the VertexCache when I'll made it!
+	m_ubos.resize(count);
+	for (std::vector<SharedPtr<UniformBufferObject>>::size_type i = 0; i < count; ++i)
+	{
+		m_ubos[i]->FreeBufferObject();
+		m_ubos[i].reset();
+	}
+	m_ubos.clear();
+
 	m_vbo->FreeBufferObject();
 	m_vbo.reset();
 	m_ibo->FreeBufferObject();
 	m_ibo.reset();
 	//
+
+	m_descriptorPool.reset();
 
 	m_pipeline.reset();
 	m_pipelineCache.reset();
@@ -228,7 +263,7 @@ bool RenderManager::CreateGraphicsPipeline(SharedPtr<VertexDescriptor> _vertexDe
 {
 	m_pipeline->SetVertexInput(_vertexDescriptor);
 	m_pipeline->SetTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-	m_pipeline->SetPolygonMode(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_CLOCKWISE);
+	m_pipeline->SetPolygonMode(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE);
 	m_pipeline->SetDepthStencil(VK_FALSE, VK_FALSE);
 	m_pipeline->SetViewport(m_swapchain);
 	m_pipeline->SetMultisample(VK_FALSE, VK_SAMPLE_COUNT_1_BIT);
@@ -263,6 +298,8 @@ bool RenderManager::RecordCommandBuffers(uint32_t _indexCount, uint32_t _instanc
 			m_commandBuffers[i]->BindVertexBuffer(m_vbo, 0, 0);
 			m_commandBuffers[i]->BindIndexBuffer(m_ibo, VK_INDEX_TYPE_UINT16, 0);
 
+			m_commandBuffers[i]->BindDescriptorSet(m_pipelineLayout, m_descriptorSets[i]);
+			
 			m_commandBuffers[i]->DrawIndexed(_indexCount, _instanceCount, _firstIndex, _vertexOffset, _firstInstance);
 
 			m_commandBuffers[i]->EndRenderPass();

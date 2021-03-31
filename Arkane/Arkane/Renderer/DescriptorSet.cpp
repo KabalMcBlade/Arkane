@@ -15,10 +15,10 @@ DescriptorSet::DescriptorSet(SharedPtr<Device> _device) : m_device(_device), m_d
 
 DescriptorSet::~DescriptorSet()
 {
-	if (m_device != VK_NULL_HANDLE)
-	{
-	
-	}
+// 	if (m_device != VK_NULL_HANDLE)
+// 	{
+// 	
+// 	}
 }
 
 bool DescriptorSet::Create(SharedPtr<DescriptorPool> _descriptorPool)

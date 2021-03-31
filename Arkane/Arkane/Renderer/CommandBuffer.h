@@ -6,8 +6,11 @@
 #include "../Core/Defines.h"
 #include "../Core/SmartPointers.h"
 
+#include <vector>
 
-#pragma warning(disable:4251)
+
+#pragma warning(disable : 4251)
+
 
 AK_NAMESPACE_BEGIN
 
@@ -18,6 +21,7 @@ class RenderPass;
 class CommandPool;
 class VertexBufferObject;
 class IndexBufferObject;
+class DescriptorSet;
 class AK_DLL CommandBuffer final
 {
 public:
@@ -39,6 +43,8 @@ public:
 	bool End();
 	void BeginRenderPass(SharedPtr<RenderPass> _renderPass, VkFramebuffer _frameBuffer);
 	void EndRenderPass();
+	void BindDescriptorSet(SharedPtr<PipelineLayout> _layout, SharedPtr<DescriptorSet> _descriptorSet);
+	void BindDescriptorSets(SharedPtr<PipelineLayout> _layout, std::vector<SharedPtr<DescriptorSet>> _descriptorSet, uint32_t firstSet = 0);
 	void SetViewport(float _x, float _y, float _width, float _height, float _minDepth, float _maxDepth);
 	void SetScissor(int32_t _offsetx, int32_t _offsety, uint32_t _width, uint32_t _height);
 	void BindPipeline(SharedPtr<Pipeline> _pipeline);

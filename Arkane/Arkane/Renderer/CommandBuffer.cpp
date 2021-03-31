@@ -10,6 +10,7 @@
 #include "PipelineLayout.h"
 #include "Pipeline.h"
 #include "Device.h"
+#include "DescriptorSet.h"
 
 #include "Buffers/BaseBufferObject.h"
 #include "Buffers/VertexBufferObject.h"
@@ -87,6 +88,21 @@ void CommandBuffer::BeginRenderPass(SharedPtr<RenderPass> _renderPass, VkFramebu
 void CommandBuffer::EndRenderPass()
 {
 	vkCmdEndRenderPass(m_commandBuffer);
+}
+
+void CommandBuffer::BindDescriptorSet(SharedPtr<PipelineLayout> _layout, SharedPtr<DescriptorSet> _descriptorSet)
+{
+	vkCmdBindDescriptorSets(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _layout->GetLayout(), 0, 1, _descriptorSet->GetDescriptorSetPtr(), 0, nullptr);
+}
+
+void CommandBuffer::BindDescriptorSets(SharedPtr<PipelineLayout> _layout, std::vector<SharedPtr<DescriptorSet>> _descriptorSet, uint32_t firstSet /*= 0*/)
+{
+	std::vector<VkDescriptorSet> descSets;
+	for (auto set : _descriptorSet)
+	{
+		descSets.push_back(set->GetDescriptorSet());
+	}
+	vkCmdBindDescriptorSets(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _layout->GetLayout(), firstSet, static_cast<uint32_t>(descSets.size()), descSets.data(), 0, nullptr);
 }
 
 void CommandBuffer::BindPipeline(SharedPtr<Pipeline> _pipeline)

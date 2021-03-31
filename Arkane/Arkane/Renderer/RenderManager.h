@@ -6,7 +6,8 @@
 #include "../Core/Defines.h"
 #include "../Core/SmartPointers.h"
 
-#include "Frame.h"	// to have enum type visible
+#include "Frame.h"
+#include "SwapChain.h"
 
 #include <string>
 #include <map>
@@ -31,9 +32,12 @@ class CommandPool;
 class CommandBuffer;
 class VertexBufferObject;
 class IndexBufferObject;
+class UniformBufferObject;
 class DescriptorSetLayout;
 class PipelineLayout;
 class VertexDescriptor;
+class DescriptorPool;
+class DescriptorSet;
 class Shader;
 
 class AK_DLL RenderManager final
@@ -74,15 +78,22 @@ public:
 	// Getters
 	AK_INLINE SharedPtr<Instance> GetRenderInstance() const { return m_instance; }
 	AK_INLINE SharedPtr<Device> GetDevice() const { return m_device; }
+	AK_INLINE uint32_t GetCurrentFrameImageIndex() const { return m_frame->GetCurrentImageIndex(); }
+	AK_INLINE size_t GetSwapChainImageCount() const { return m_swapchain->GetImageViewsCount(); }
+
 
 	// TODO: These will moved in the VertexCache when I'll made it!
 	AK_INLINE SharedPtr<VertexBufferObject> GetVBO() const { return m_vbo; };
 	AK_INLINE SharedPtr<IndexBufferObject> GetIBO() const { return m_ibo; };
+	AK_INLINE SharedPtr<UniformBufferObject> GetUBO(uint32_t _i) const { return m_ubos[_i]; };
 	//
+
 
 	AK_INLINE SharedPtr<SwapChain> GetSwapChain() const { return m_swapchain; }
 	AK_INLINE SharedPtr<DescriptorSetLayout> GetDescriptorSetLayout() const { return m_descriptorSetLayout; }
 	AK_INLINE SharedPtr<PipelineLayout> GetPipelineLayout() const { return m_pipelineLayout; }
+	AK_INLINE SharedPtr<DescriptorPool> GetDescriptorPool() const { return m_descriptorPool; }
+	AK_INLINE SharedPtr<DescriptorSet> GetDescriptorSet(uint32_t _i) const { return m_descriptorSets[_i]; };
 
 
 private:
@@ -105,7 +116,10 @@ private:
 	SharedPtr<IndexBufferObject> m_ibo;
 	SharedPtr<DescriptorSetLayout> m_descriptorSetLayout;
 	SharedPtr<PipelineLayout> m_pipelineLayout;
+	SharedPtr<DescriptorPool> m_descriptorPool;
 
+	std::vector<SharedPtr<DescriptorSet>> m_descriptorSets;
+	std::vector<SharedPtr<UniformBufferObject>> m_ubos;
 	std::vector<SharedPtr<FrameBuffer>> m_frameBuffers;
 	std::vector<SharedPtr<CommandBuffer>> m_commandBuffers;
 };

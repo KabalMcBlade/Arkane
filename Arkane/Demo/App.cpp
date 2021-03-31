@@ -18,6 +18,13 @@ static void KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _actio
 //////////////////////////////////////////////////////////////////////////
 
 
+struct UniformBufferObjectData
+{
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
 
 // CREATE VERTEX AND INDEX
 // TRIANGLE
@@ -132,39 +139,64 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEX BUFFER OBJECT
 	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
-	if (RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
-	{
-		void* vboMemory = RenderManager::GetInstance().GetVBO()->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
-
-		// Do not need to update because I have allocated memory directly (not pre allocated empty)
-		//RenderManager::GetInstance().GetVBO()->Update(_vertices.data(), (uint32_t)sizeVertex);
-
-		RenderManager::GetInstance().GetVBO()->UnmapBuffer();
-	}
+	result = RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic);
+	akAssertReturnValue(result == true, false, "Cannot allocated Vertex Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE INDEX BUFFER OBJECT
 	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
-	if (RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
-	{
-		void* iboMemory = RenderManager::GetInstance().GetIBO()->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
-
-		// Do not need to update because I have allocated memory directly (not pre allocated empty)
-		//m_ibo->Update(_indices.data(), (uint32_t)sizeIndex);
-
-		RenderManager::GetInstance().GetIBO()->UnmapBuffer();
-	}
+	result = RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic);
+	akAssertReturnValue(result == true, false, "Cannot allocated Index Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE DESCRIPTORSETLAYOUT
 	RenderManager::GetInstance().GetDescriptorSetLayout()->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
-
 	result = RenderManager::GetInstance().GetDescriptorSetLayout()->Create();
 	akAssertReturnValue(result == true, false, "Cannot create DescriptorSetLayout.");
+	//////////////////////////////////////////////////////////////////////////
+
+
+	const uint32_t swapChainCount = (uint32_t)RenderManager::GetInstance().GetSwapChainImageCount();
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE DESCRIPTORPOOL
+	RenderManager::GetInstance().GetDescriptorPool()->Push(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, swapChainCount);
+	result = RenderManager::GetInstance().GetDescriptorPool()->Create(0, swapChainCount);
+	akAssertReturnValue(result == true, false, "Cannot create DescriptorPool.");
+	//////////////////////////////////////////////////////////////////////////
+
+
+	//////////////////////////////////////////////////////////////////////////
+	// CREATE UNIFORM BUFFER OBJECT AND DESCRIPTORSETS
+	const size_t sizeUbo = (sizeof(UniformBufferObjectData) + mask) & ~mask;
+
+	UniformBufferObjectData ubo{};
+	ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.proj = glm::perspective(glm::radians(45.0f), (float)RenderManager::GetInstance().GetSwapChain()->GetExtent().width / (float)RenderManager::GetInstance().GetSwapChain()->GetExtent().height, 0.1f, 10.0f);
+	ubo.proj[1][1] *= -1;
+
+	for (uint32_t i = 0; i < swapChainCount; ++i)
+	{
+		if (RenderManager::GetInstance().GetUBO(i)->AllocBufferObject(&ubo, (uint32_t)sizeUbo, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+		{
+			RenderManager::GetInstance().GetDescriptorSet(i)->PushLayout(RenderManager::GetInstance().GetDescriptorSetLayout());
+
+			VkDescriptorBufferInfo bufferInfo{};
+			bufferInfo.buffer = RenderManager::GetInstance().GetUBO(i)->GetBufferObject();
+			bufferInfo.offset = RenderManager::GetInstance().GetUBO(i)->GetOffset();
+			bufferInfo.range = RenderManager::GetInstance().GetUBO(i)->GetAllocedSize();
+			RenderManager::GetInstance().GetDescriptorSet(i)->PushDescriptor(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+
+			result = RenderManager::GetInstance().GetDescriptorSet(i)->Create(RenderManager::GetInstance().GetDescriptorPool());
+			akAssertReturnValue(result == true, false, "Cannot create DescriptorSet.");
+		}
+	}
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -217,7 +249,20 @@ void App::UpdateFrame()
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-	//uint32_t imageIndex = m_frame->GetCurrentImageIndex();
+	const uint32_t imageIndex = RenderManager::GetInstance().GetCurrentFrameImageIndex();
+
+	UniformBufferObjectData ubo{};
+	ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	ubo.proj = glm::perspective(glm::radians(45.0f), (float)RenderManager::GetInstance().GetSwapChain()->GetExtent().width / (float)RenderManager::GetInstance().GetSwapChain()->GetExtent().height, 0.1f, 10.0f);
+	ubo.proj[1][1] *= -1;
+
+	const size_t align = 16;
+	const size_t mask = align - 1;
+	const size_t sizeUbo = (sizeof(UniformBufferObjectData) + mask) & ~mask;
+	RenderManager::GetInstance().GetUBO(imageIndex)->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+	RenderManager::GetInstance().GetUBO(imageIndex)->Update(&ubo, (uint32_t)sizeUbo);
+	RenderManager::GetInstance().GetUBO(imageIndex)->UnmapBuffer();
 }
 
 void App::Recreate()
