@@ -18,7 +18,7 @@ PipelineLayout::~PipelineLayout()
 {
 	if (m_device != VK_NULL_HANDLE && m_pipelineLayout != VK_NULL_HANDLE)
 	{
-		vkDestroyPipelineLayout(m_device->GetDevice(), m_pipelineLayout, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyPipelineLayout(m_device->GetDevice(), m_pipelineLayout, VulkanAllocator::GetInstance().GetCallbacks());
 		m_pipelineLayout = VK_NULL_HANDLE;
 	}
 }
@@ -36,7 +36,7 @@ bool PipelineLayout::Create()
 		createInfo.pPushConstantRanges = m_pushContant.data();
 	}
 
-	VkResult result = vkCreatePipelineLayout(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_pipelineLayout);
+	VkResult result = vkCreatePipelineLayout(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_pipelineLayout);
 
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create PipelineLayout");
 	return m_pipelineLayout != VK_NULL_HANDLE;

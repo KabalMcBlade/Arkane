@@ -17,7 +17,7 @@ DescriptorPool::~DescriptorPool()
 {
 	if (m_device != VK_NULL_HANDLE && m_descriptorPool != VK_NULL_HANDLE)
 	{
-		vkDestroyDescriptorPool(m_device->GetDevice(), m_descriptorPool, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyDescriptorPool(m_device->GetDevice(), m_descriptorPool, VulkanAllocator::GetInstance().GetCallbacks());
 		m_descriptorPool = VK_NULL_HANDLE;
 	}
 }
@@ -33,7 +33,7 @@ bool DescriptorPool::Create(VkDescriptorPoolCreateFlags _flag /*= VK_DESCRIPTOR_
 	createInfo.maxSets = _maxDescriptorSet;
 	createInfo.flags = _flag;
 
-	VkResult result = vkCreateDescriptorPool(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_descriptorPool);
+	VkResult result = vkCreateDescriptorPool(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_descriptorPool);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create DescriptorPool");
 
 	return m_descriptorPool != VK_NULL_HANDLE;

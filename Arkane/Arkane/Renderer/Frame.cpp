@@ -28,13 +28,13 @@ Frame::Frame(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapChain) : m_dev
 
 	for (size_t i = 0; i < kNumOfFramesInFlight; ++i)
 	{
-		VkResult result = vkCreateSemaphore(m_device->GetDevice(), &semaphoreInfo, VulkanAllocator::Instance().GetCallbacks(), &m_imageAvailableSemaphores[i]);
+		VkResult result = vkCreateSemaphore(m_device->GetDevice(), &semaphoreInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_imageAvailableSemaphores[i]);
 		akAssertReturnVoid(result == VK_SUCCESS, "Failed to create semaphore for availability");
 
-		result = vkCreateSemaphore(m_device->GetDevice(), &semaphoreInfo, VulkanAllocator::Instance().GetCallbacks(), &m_renderFinishedSemaphores[i]);
+		result = vkCreateSemaphore(m_device->GetDevice(), &semaphoreInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_renderFinishedSemaphores[i]);
 		akAssertReturnVoid(result == VK_SUCCESS, "Failed to create semaphore for finished render");
 
-		result = vkCreateFence(m_device->GetDevice(), &fenceInfo, VulkanAllocator::Instance().GetCallbacks(), &m_inFlightFences[i]);
+		result = vkCreateFence(m_device->GetDevice(), &fenceInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_inFlightFences[i]);
 		akAssertReturnVoid(result == VK_SUCCESS, "Failed to create fence");
 	}
 }
@@ -43,9 +43,9 @@ Frame::~Frame()
 {
 	for (size_t i = 0; i < kNumOfFramesInFlight; ++i)
 	{
-		vkDestroySemaphore(m_device->GetDevice(), m_renderFinishedSemaphores[i], VulkanAllocator::Instance().GetCallbacks());
-		vkDestroySemaphore(m_device->GetDevice(), m_imageAvailableSemaphores[i], VulkanAllocator::Instance().GetCallbacks());
-		vkDestroyFence(m_device->GetDevice(), m_inFlightFences[i], VulkanAllocator::Instance().GetCallbacks());
+		vkDestroySemaphore(m_device->GetDevice(), m_renderFinishedSemaphores[i], VulkanAllocator::GetInstance().GetCallbacks());
+		vkDestroySemaphore(m_device->GetDevice(), m_imageAvailableSemaphores[i], VulkanAllocator::GetInstance().GetCallbacks());
+		vkDestroyFence(m_device->GetDevice(), m_inFlightFences[i], VulkanAllocator::GetInstance().GetCallbacks());
 	}
 }
 

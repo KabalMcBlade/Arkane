@@ -22,13 +22,11 @@ public:
 
 	AK_INLINE const GLFWwindow& GetWindow() const { return *m_window; }
 
-
+	virtual const VkSurfaceKHR& GetSurafe() const override { return m_surface; }
 	virtual int32_t GetFrameWidth() const override { return m_frameWidth; }
 	virtual int32_t GetFrameHeight() const override { return m_frameHeight; }
 
-	virtual const VkSurfaceKHR& GetSurafe() const override { return m_surface; }
-
-	virtual bool RecordCommandBuffers() override;
+	virtual void RecordCommandBuffers() override;
 
 	virtual void InitWindow() override;
 	virtual void InitEngine() override;

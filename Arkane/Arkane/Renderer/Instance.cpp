@@ -111,7 +111,7 @@ Instance::Instance(const char* _appName, uint32_t _appVersion /*= VK_MAKE_VERSIO
 	createInfo.enabledExtensionCount = static_cast<uint32_t>(enabledExtensions.size());
 	createInfo.ppEnabledExtensionNames = enabledExtensions.data();
 
-	VkResult result = vkCreateInstance(&createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_instance);
+	VkResult result = vkCreateInstance(&createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_instance);
 
 	if (m_validationLayerEnabled && !m_debugReportCreated && result == VK_SUCCESS)
 	{
@@ -132,7 +132,7 @@ Instance::~Instance()
 
 	if (m_instance != VK_NULL_HANDLE)
 	{
-		vkDestroyInstance(m_instance, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyInstance(m_instance, VulkanAllocator::GetInstance().GetCallbacks());
 		m_instance = VK_NULL_HANDLE;
 	}
 }
@@ -150,7 +150,7 @@ void Instance::CreateDebugReport(const VkDebugReportCallbackCreateInfoEXT& creat
 	auto func = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT");
 	if (func != nullptr)
 	{
-		VkResult result = func(m_instance, &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_debugCallback);
+		VkResult result = func(m_instance, &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_debugCallback);
 		akAssertReturnVoid(result == VK_SUCCESS, "Impossible create Debug Report!");
 	}
 }
@@ -160,7 +160,7 @@ void Instance::DestroyDebugReport()
 	auto func = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(m_instance, "vkDestroyDebugReportCallbackEXT");
 	if (func != nullptr)
 	{
-		func(m_instance, m_debugCallback, VulkanAllocator::Instance().GetCallbacks());
+		func(m_instance, m_debugCallback, VulkanAllocator::GetInstance().GetCallbacks());
 	}
 }
 

@@ -20,7 +20,7 @@ class Device;
 class AK_DLL ShaderManager final
 {
 public:
-	static ShaderManager& Instance();
+	static ShaderManager& GetInstance();
 
 	SharedPtr<Shader> Load(SharedPtr<Device> _device, const std::string& _path);
 

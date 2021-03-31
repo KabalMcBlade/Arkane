@@ -24,7 +24,7 @@ FrameBuffer::~FrameBuffer()
 {
 	if (m_device != VK_NULL_HANDLE && m_framebuffer != VK_NULL_HANDLE)
 	{
-		vkDestroyFramebuffer(m_device->GetDevice(), m_framebuffer, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyFramebuffer(m_device->GetDevice(), m_framebuffer, VulkanAllocator::GetInstance().GetCallbacks());
 		m_framebuffer = VK_NULL_HANDLE;
 	}
 }
@@ -41,7 +41,7 @@ bool FrameBuffer::Create(VkFramebufferCreateFlags _flags/* = 0*/)
 	info.layers = m_layers;
 	info.flags = _flags;
 
-	VkResult result = vkCreateFramebuffer(m_device->GetDevice(), &info, VulkanAllocator::Instance().GetCallbacks(), &m_framebuffer);
+	VkResult result = vkCreateFramebuffer(m_device->GetDevice(), &info, VulkanAllocator::GetInstance().GetCallbacks(), &m_framebuffer);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create FrameBuffer");
 
 	return m_framebuffer != VK_NULL_HANDLE;

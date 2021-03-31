@@ -13,7 +13,7 @@ AK_NAMESPACE_BEGIN
 class AK_DLL ECSManager
 {
 public:
-	static ECSManager& Instance();
+	static ECSManager& GetInstance();
 
 	Entity CreateEntity();
 	void DestroyEntity(Entity entity);

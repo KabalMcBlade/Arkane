@@ -3,7 +3,7 @@
 AK_NAMESPACE_BEGIN
 
 
-ECSManager& ECSManager::Instance()
+ECSManager& ECSManager::GetInstance()
 {
 	static ECSManager instance;
 	return instance;

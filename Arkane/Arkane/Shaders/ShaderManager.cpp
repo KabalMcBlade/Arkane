@@ -9,7 +9,7 @@
 
 AK_NAMESPACE_BEGIN
 
-ShaderManager& ShaderManager::Instance()
+ShaderManager& ShaderManager::GetInstance()
 {
 	static ShaderManager instance;
 	return instance;

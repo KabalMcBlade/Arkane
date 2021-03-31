@@ -92,7 +92,7 @@ void App::InitWindow()
 
 	glfwMakeContextCurrent(m_window);
 
-	VkResult result = glfwCreateWindowSurface(m_instance->GetInstance(), m_window, VulkanAllocator::Instance().GetCallbacks(), &m_surface);
+	VkResult result = glfwCreateWindowSurface(RenderManager::GetInstance().GetRenderInstance()->GetInstance(), m_window, VulkanAllocator::GetInstance().GetCallbacks(), &m_surface);
 	akAssertReturnVoid(result == VK_SUCCESS, "Failed to create window surface.");
 
 	m_enabledFeatures = {};
@@ -106,7 +106,6 @@ void App::InitEngine()
 	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
 }
 
-
 bool App::CreateGraphicPipeline()
 {
 	bool result = false;
@@ -116,8 +115,8 @@ bool App::CreateGraphicPipeline()
 	std::string vertpath = m_fileSystem->GetShadersPath() + "Simple.vert.spv";
 	std::string fragpath = m_fileSystem->GetShadersPath() + "Simple.frag.spv";
 
-	SharedPtr<Shader> testVert = ShaderManager::Instance().Load(m_device, vertpath);
-	SharedPtr<Shader> testFrag = ShaderManager::Instance().Load(m_device, fragpath);
+	SharedPtr<Shader> testVert = ShaderManager::GetInstance().Load(RenderManager::GetInstance().GetDevice(), vertpath);
+	SharedPtr<Shader> testFrag = ShaderManager::GetInstance().Load(RenderManager::GetInstance().GetDevice(), fragpath);
 	//////////////////////////////////////////////////////////////////////////
 
 
@@ -133,14 +132,14 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEX BUFFER OBJECT
 	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
-	if (m_vbo->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+	if (RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
 	{
-		void* vboMemory = m_vbo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+		void* vboMemory = RenderManager::GetInstance().GetVBO()->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
 		// Do not need to update because I have allocated memory directly (not pre allocated empty)
-		//m_vbo->Update(_vertices.data(), (uint32_t)sizeVertex);
+		//RenderManager::GetInstance().GetVBO()->Update(_vertices.data(), (uint32_t)sizeVertex);
 
-		m_vbo->UnmapBuffer();
+		RenderManager::GetInstance().GetVBO()->UnmapBuffer();
 	}
 	//////////////////////////////////////////////////////////////////////////
 
@@ -148,138 +147,59 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE INDEX BUFFER OBJECT
 	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
-	if (m_ibo->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+	if (RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic))
 	{
-		void* iboMemory = m_ibo->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+		void* iboMemory = RenderManager::GetInstance().GetIBO()->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
 
 		// Do not need to update because I have allocated memory directly (not pre allocated empty)
 		//m_ibo->Update(_indices.data(), (uint32_t)sizeIndex);
 
-		m_ibo->UnmapBuffer();
+		RenderManager::GetInstance().GetIBO()->UnmapBuffer();
 	}
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE DESCRIPTORSETLAYOUT
-	m_descriptorSetLayout->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
+	RenderManager::GetInstance().GetDescriptorSetLayout()->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
 
-	result = m_descriptorSetLayout->Create();
+	result = RenderManager::GetInstance().GetDescriptorSetLayout()->Create();
 	akAssertReturnValue(result == true, false, "Cannot create DescriptorSetLayout.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE PIPELINE LAYOUT
-	//m_pipelineLayout->PushConstant();	// Optional, only if we have!
-	result = m_pipelineLayout->Create();
+	//RenderManager::GetInstance().GetPipelineLayout()->PushConstant();	// Optional, only if we have!
+	result = RenderManager::GetInstance().GetPipelineLayout()->Create();
 	akAssertReturnValue(result == true, false, "Cannot create PipelineLayout.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE RENDERPASS
-	VkAttachmentDescription colorAttachment{};
-	colorAttachment.format = m_swapchain->GetFormat();
-	colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-	VkAttachmentReference colorAttachmentRef{};
-	colorAttachmentRef.attachment = 0;
-	colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	VkSubpassDescription subpass{};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentRef;
-
-	VkSubpassDependency dependency{};
-	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass = 0;
-	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.srcAccessMask = 0;
-	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-	m_renderPass->SetDimensions(m_frameWidth, m_frameHeight);
-	m_renderPass->SetOffset(0, 0);
-	m_renderPass->PushColorDepthStencilClearValue(0.0f, 0.0f, 0.0f, 1.0f);
-	m_renderPass->PushAttachmentDescription(colorAttachment);
-	m_renderPass->PushSubpassDependency(dependency);
-	m_renderPass->PushSubpassDescription(subpass);
-	//m_renderPass->SetFrameBuffer(m_framebuffer);		// NEVER CALL THIS FUNCTION HERE! CALL FROM CommandBuffer!
-
-	result = m_renderPass->Create();
+	result = RenderManager::GetInstance().CreateRenderPass(m_frameWidth, m_frameHeight);
 	akAssertReturnValue(result == true, false, "Cannot create RenderPass.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
-	// CREATE PIEPLINE
-	m_pipeline->SetVertexInput(vertex);
-	m_pipeline->SetTopology(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
-	m_pipeline->SetPolygonMode(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_CLOCKWISE);
-	m_pipeline->SetDepthStencil(VK_FALSE, VK_FALSE);
-	m_pipeline->SetViewport(m_swapchain);
-	m_pipeline->SetMultisample(VK_FALSE, VK_SAMPLE_COUNT_1_BIT);
-
-	// Call Set without push will not add anything but will create the structure, which is need it
-	//m_pipeline->PushDynamic();	
-	m_pipeline->SetDynamics();
-
-	m_pipeline->PushColorBlendAttachment(VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, VK_FALSE);
-	m_pipeline->SetColorBlendAttachments();
-
-	m_pipeline->SetLayout(m_pipelineLayout);
-	m_pipeline->SetRenderPass(m_renderPass);
-	m_pipeline->SetCache(m_pipelineCache);
-
-	m_pipeline->PushShader(testVert);
-	m_pipeline->PushShader(testFrag);
-
-	result = m_pipeline->Create();
+	// CREATE GRAPHIC PIPELINE
+	result = RenderManager::GetInstance().CreateGraphicsPipeline(vertex, testVert, testFrag);
 	akAssertReturnValue(result == true, false, "Cannot create Pipeline.");
 	//////////////////////////////////////////////////////////////////////////
 
 	return result;
 }
 
-bool App::RecordCommandBuffers()
+void App::RecordCommandBuffers()
 {
-	bool result = true;
-	for (size_t i = 0; i < m_commandBuffers.size(); i++)
-	{
-		result = m_commandBuffers[i]->Begin();
-		akAssertReturnValue(result == true, false, "Cannot begin command buffer.");
-
-		m_commandBuffers[i]->BeginRenderPass(m_renderPass, m_frameBuffers[i]->GetFrameBuffer());
-
-		m_commandBuffers[i]->BindPipeline(m_pipeline);
-
-		m_commandBuffers[i]->BindVertexBuffer(m_vbo, 0, 0);
-		m_commandBuffers[i]->BindIndexBuffer(m_ibo, VK_INDEX_TYPE_UINT16, 0);
-
-		m_commandBuffers[i]->DrawIndexed((uint32_t)_indices.size(), 1, 0, 0, 0);
-
-		m_commandBuffers[i]->EndRenderPass();
-
-		result = m_commandBuffers[i]->End();
-		akAssertReturnValue(result == true, false, "Failed to record command buffer.");
-	}
-
-	return result;
+	bool result = RenderManager::GetInstance().RecordCommandBuffers((uint32_t)_indices.size(), 1, 0, 0, 0);
+	akAssertReturnVoid(result == true, "Impossible recording command buffer!");
 }
 
 void App::MainLoop()
 {
-	bool result = RecordCommandBuffers();
-	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
-
 	while (!glfwWindowShouldClose(m_window))
 	{
 		glfwPollEvents();
@@ -297,7 +217,7 @@ void App::UpdateFrame()
 	auto currentTime = std::chrono::high_resolution_clock::now();
 	float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-	uint32_t imageIndex = m_frame->GetCurrentImageIndex();
+	//uint32_t imageIndex = m_frame->GetCurrentImageIndex();
 }
 
 void App::Recreate()
@@ -312,9 +232,9 @@ void App::Recreate()
 
 void App::Cleanup()
 {
-	ShaderManager::Instance().DestroyAll();
+	ShaderManager::GetInstance().DestroyAll();
 
-	vkDestroySurfaceKHR(m_instance->GetInstance(), m_surface, VulkanAllocator::Instance().GetCallbacks());
+	vkDestroySurfaceKHR(RenderManager::GetInstance().GetRenderInstance()->GetInstance(), m_surface, VulkanAllocator::GetInstance().GetCallbacks());
 
 	glfwDestroyWindow(m_window);
 

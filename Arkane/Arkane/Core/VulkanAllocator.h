@@ -17,7 +17,7 @@ class Device;
 class AK_DLL VulkanAllocator final
 {
 public:
-	static VulkanAllocator& Instance();
+	static VulkanAllocator& GetInstance();
 
 	void CreateVMA(SharedPtr<Device> _device);
 	void DestroyVMA();

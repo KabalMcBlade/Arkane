@@ -12,7 +12,7 @@ PipelineCache::PipelineCache(SharedPtr<Device> _device) : m_device(_device)
 {
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo{};
 	pipelineCacheCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-	VkResult result = vkCreatePipelineCache(m_device->GetDevice(), &pipelineCacheCreateInfo, VulkanAllocator::Instance().GetCallbacks(), &m_pipelineCache);
+	VkResult result = vkCreatePipelineCache(m_device->GetDevice(), &pipelineCacheCreateInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_pipelineCache);
 	akAssertReturnVoid(result == VK_SUCCESS, "Cannot generate Pipeline!");
 }
 
@@ -20,7 +20,7 @@ PipelineCache::~PipelineCache()
 {
 	if (m_device != VK_NULL_HANDLE && m_pipelineCache != VK_NULL_HANDLE)
 	{
-		vkDestroyPipelineCache(m_device->GetDevice(), m_pipelineCache, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyPipelineCache(m_device->GetDevice(), m_pipelineCache, VulkanAllocator::GetInstance().GetCallbacks());
 	}
 }
 

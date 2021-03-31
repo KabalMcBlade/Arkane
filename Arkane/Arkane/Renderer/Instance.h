@@ -8,7 +8,7 @@
 
 AK_NAMESPACE_BEGIN
 
-class Instance final
+class AK_DLL Instance final
 {
 public:
 	static uint32_t s_ApiVersion;

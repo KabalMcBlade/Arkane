@@ -3,7 +3,7 @@
 
 AK_NAMESPACE_BEGIN
 
-EventManager& EventManager::Instance()
+EventManager& EventManager::GetInstance()
 {
 	static EventManager instance;
 	return instance;

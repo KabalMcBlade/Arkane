@@ -30,7 +30,7 @@ Pipeline::~Pipeline()
 {
 	if (m_device != VK_NULL_HANDLE && m_pipeline != VK_NULL_HANDLE)
 	{
-		vkDestroyPipeline(m_device->GetDevice(), m_pipeline, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyPipeline(m_device->GetDevice(), m_pipeline, VulkanAllocator::GetInstance().GetCallbacks());
 	}
 }
 
@@ -58,7 +58,7 @@ bool Pipeline::Create(VkPipelineBindPoint _bindPoint /*= VK_PIPELINE_BIND_POINT_
 	createInfo.pDepthStencilState = &m_depthStencil;
 	createInfo.pDynamicState = &m_dynamic;
 
-	VkResult result = vkCreateGraphicsPipelines(m_device->GetDevice(), m_cache, 1, &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_pipeline);
+	VkResult result = vkCreateGraphicsPipelines(m_device->GetDevice(), m_cache, 1, &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_pipeline);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot generate Pipeline!");
 
 	return m_pipeline != VK_NULL_HANDLE;

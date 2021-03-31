@@ -67,7 +67,7 @@ DescriptorSetLayout::~DescriptorSetLayout()
 {
 	if (m_device != VK_NULL_HANDLE && m_descriptorSetLayout != VK_NULL_HANDLE)
 	{
-		vkDestroyDescriptorSetLayout(m_device->GetDevice(), m_descriptorSetLayout, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyDescriptorSetLayout(m_device->GetDevice(), m_descriptorSetLayout, VulkanAllocator::GetInstance().GetCallbacks());
 		m_descriptorSetLayout = VK_NULL_HANDLE;
 	}
 }
@@ -81,7 +81,7 @@ bool DescriptorSetLayout::Create()
 	createInfo.bindingCount = (uint32_t)m_bindings.size();
 	createInfo.pBindings = m_bindings.data();
 
-	VkResult result = vkCreateDescriptorSetLayout(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_descriptorSetLayout);
+	VkResult result = vkCreateDescriptorSetLayout(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_descriptorSetLayout);
 
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create DescriptorSetLayout");
 	return m_descriptorSetLayout != VK_NULL_HANDLE;

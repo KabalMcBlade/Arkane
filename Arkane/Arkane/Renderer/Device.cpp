@@ -95,7 +95,7 @@ Device::Device(const VkInstance& _instance, const VkSurfaceKHR& _surface, const 
 				createInfo.enabledLayerCount = 0;
 			}
 
-			VkResult result = vkCreateDevice(m_physicalDevice, &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_device);
+			VkResult result = vkCreateDevice(m_physicalDevice, &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_device);
 			akAssertReturnVoid(result == VK_SUCCESS, "Cannot create logical device");
 
 			vkGetDeviceQueue(m_device, m_queueFamily->GetGraphicsFamily(), 0, &m_graphicsQueue);
@@ -114,7 +114,7 @@ Device::~Device()
 {
 	if (m_device != VK_NULL_HANDLE)
 	{
-		vkDestroyDevice(m_device, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyDevice(m_device, VulkanAllocator::GetInstance().GetCallbacks());
 		m_device = VK_NULL_HANDLE;
 	}
 }

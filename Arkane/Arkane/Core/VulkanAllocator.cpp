@@ -16,7 +16,7 @@
 
 AK_NAMESPACE_BEGIN
 
-VulkanAllocator& VulkanAllocator::Instance()
+VulkanAllocator& VulkanAllocator::GetInstance()
 {
 	static VulkanAllocator instance;
 	return instance;

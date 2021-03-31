@@ -70,6 +70,7 @@
 #include "Renderer/Frame.h"
 #include "Renderer/DescriptorPool.h"
 #include "Renderer/DescriptorSet.h"
+#include "Renderer/RenderManager.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -10,7 +10,7 @@
 
 AK_NAMESPACE_BEGIN
 
-StagingManager& StagingManager::Instance()
+StagingManager& StagingManager::GetInstance()
 {
 	static StagingManager instance;
 	return instance;
@@ -55,7 +55,7 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 	VkResult result;
 	for (size_t i = 0; i < m_numFrames; ++i)
 	{
-		result = vmaCreateBuffer(VulkanAllocator::Instance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_buffers[i].m_buffer, &m_buffers[i].m_allocation, &m_buffers[i].m_allocationInfo);
+		result = vmaCreateBuffer(VulkanAllocator::GetInstance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_buffers[i].m_buffer, &m_buffers[i].m_allocation, &m_buffers[i].m_allocationInfo);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create buffer");
 	}
 
@@ -70,16 +70,16 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 	allocInfo = {};
 	allocInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;	// VMA_MEMORY_USAGE_GPU_ONLY;
 
-	result = vmaAllocateMemory(VulkanAllocator::Instance().GetVMA(), &memoryRequirements, &allocInfo, &m_allocation, &m_allocationInfo);
+	result = vmaAllocateMemory(VulkanAllocator::GetInstance().GetVMA(), &memoryRequirements, &allocInfo, &m_allocation, &m_allocationInfo);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot allocate memory");
 
 	for (size_t i = 0; i < m_numFrames; ++i)
 	{
-		result = vmaBindBufferMemory2(VulkanAllocator::Instance().GetVMA(), m_allocation, i * alignedSize, m_buffers[i].m_buffer, nullptr);
+		result = vmaBindBufferMemory2(VulkanAllocator::GetInstance().GetVMA(), m_allocation, i * alignedSize, m_buffers[i].m_buffer, nullptr);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot bind buffer to memory");
 	}
 
-	result = vmaMapMemory(VulkanAllocator::Instance().GetVMA(), m_allocation, reinterpret_cast<void**>(&m_mappedData));
+	result = vmaMapMemory(VulkanAllocator::GetInstance().GetVMA(), m_allocation, reinterpret_cast<void**>(&m_mappedData));
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot map the memory");
 
 
@@ -87,7 +87,7 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 	commandPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	commandPoolCreateInfo.queueFamilyIndex = m_device->GetQueueFamily()->GetGraphicsFamily();
-	result = vkCreateCommandPool(m_device->GetDevice(), &commandPoolCreateInfo, VulkanAllocator::Instance().GetCallbacks(), &m_commandPool);
+	result = vkCreateCommandPool(m_device->GetDevice(), &commandPoolCreateInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_commandPool);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create command pool");
 
 	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
@@ -106,7 +106,7 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 		result = vkAllocateCommandBuffers(m_device->GetDevice(), &commandBufferAllocateInfo, &m_buffers[i].m_commandBuffer);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot allocate command buffer");
 
-		result = vkCreateFence(m_device->GetDevice(), &fenceCreateInfo, VulkanAllocator::Instance().GetCallbacks(), &m_buffers[i].m_fence);
+		result = vkCreateFence(m_device->GetDevice(), &fenceCreateInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_buffers[i].m_fence);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create fence");
 
 		result = vkBeginCommandBuffer(m_buffers[i].m_commandBuffer, &commandBufferBeginInfo);
@@ -118,19 +118,19 @@ bool StagingManager::Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapC
 
 void StagingManager::Shutdown()
 {
-	vmaUnmapMemory(VulkanAllocator::Instance().GetVMA(), m_allocation);
+	vmaUnmapMemory(VulkanAllocator::GetInstance().GetVMA(), m_allocation);
 	m_mappedData = nullptr;
 
 	for (uint32_t i = 0; i < m_numFrames; ++i)
 	{
-		vkDestroyFence(m_device->GetDevice(), m_buffers[i].m_fence, VulkanAllocator::Instance().GetCallbacks());
-		vmaDestroyBuffer(VulkanAllocator::Instance().GetVMA(), m_buffers[i].m_buffer, m_buffers[i].m_allocation);
+		vkDestroyFence(m_device->GetDevice(), m_buffers[i].m_fence, VulkanAllocator::GetInstance().GetCallbacks());
+		vmaDestroyBuffer(VulkanAllocator::GetInstance().GetVMA(), m_buffers[i].m_buffer, m_buffers[i].m_allocation);
 		vkFreeCommandBuffers(m_device->GetDevice(), m_commandPool, 1, &m_buffers[i].m_commandBuffer);
 	}
 
-	vkDestroyCommandPool(m_device->GetDevice(), m_commandPool, VulkanAllocator::Instance().GetCallbacks());
+	vkDestroyCommandPool(m_device->GetDevice(), m_commandPool, VulkanAllocator::GetInstance().GetCallbacks());
 
-	vmaFreeMemory(VulkanAllocator::Instance().GetVMA(), m_allocation);
+	vmaFreeMemory(VulkanAllocator::GetInstance().GetVMA(), m_allocation);
 
 	m_buffers.clear();
 

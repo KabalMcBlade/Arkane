@@ -52,7 +52,7 @@ bool VertexBufferObject::AllocBufferObject(const void* _data, uint32_t _allocSiz
 		allocInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT;
 	}
 
-	VkResult result = vmaCreateBuffer(VulkanAllocator::Instance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_object, &m_vmaAllocation, &m_allocation);
+	VkResult result = vmaCreateBuffer(VulkanAllocator::GetInstance().GetVMA(), &bufferCreateInfo, &allocInfo, &m_object, &m_vmaAllocation, &m_allocation);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Cannot create buffer");
 
 	if (_data != nullptr) 
@@ -83,7 +83,7 @@ void VertexBufferObject::FreeBufferObject()
 
 	if (m_object != VK_NULL_HANDLE) 
 	{
-		vmaDestroyBuffer(VulkanAllocator::Instance().GetVMA(), m_object, m_vmaAllocation);
+		vmaDestroyBuffer(VulkanAllocator::GetInstance().GetVMA(), m_object, m_vmaAllocation);
 		m_object = VK_NULL_HANDLE;
 		m_allocation = VmaAllocationInfo();
 		m_vmaAllocation = nullptr;
@@ -143,7 +143,7 @@ void VertexBufferObject::Update(const void* _data, uint32_t _size, uint32_t _off
 		VkBuffer stageBuffer;
 		VkCommandBuffer commandBuffer;
 		size_t stageOffset = 0;
-		uint8_t* stageData = StagingManager::Instance().Stage(_size, 1, commandBuffer, stageBuffer, stageOffset);
+		uint8_t* stageData = StagingManager::GetInstance().Stage(_size, 1, commandBuffer, stageBuffer, stageOffset);
 
 		MemCpy(stageData, _data, _size);
 

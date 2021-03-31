@@ -3,22 +3,7 @@
 #include "../Core/Assertions.h"
 #include "../Core/VulkanAllocator.h"
 
-#include "../Renderer/QueueFamily.h"
-#include "../Renderer/Device.h"
-#include "../Renderer/Instance.h"
-#include "../Renderer/SwapChain.h"
-#include "../Renderer/RenderPass.h"
-#include "../Renderer/PipelineCache.h"
-#include "../Renderer/Pipeline.h"
-#include "../Renderer/FrameBuffer.h"
-#include "../Renderer/CommandPool.h"
-#include "../Renderer/StagingManager.h"
-#include "../Renderer/CommandBuffer.h"
-#include "../Renderer/Frame.h"
-#include "../Renderer/Buffers/VertexBufferObject.h"
-#include "../Renderer/Buffers/IndexBufferObject.h"
-#include "../Renderer/DescriptorSetLayout.h"
-#include "../Renderer/PipelineLayout.h"
+#include "../Renderer/RenderManager.h"
 
 #include "CommandLineParser.h"
 #include "FileSystem.h"
@@ -51,33 +36,14 @@ void EngineApp::Execute()
 
 void EngineApp::InternalInitWindow()
 {
-	m_instance = MakeSharedPtr<Instance>(m_name, m_version);
+	RenderManager::GetInstance().CreateInstance(m_name, m_version);
 
 	InitWindow();
 }
 
 void EngineApp::InternalInitEngine()
 {
-	m_device = MakeSharedPtr<Device>(m_instance->GetInstance(), GetSurafe(), m_enabledFeatures);
-
-	VulkanAllocator::Instance().CreateVMA(m_device);
-
-	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetFrameWidth(), GetFrameHeight());
-
-	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
-
-	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
-	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
-	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
-
-	StagingManager::Instance().Init(m_device, m_swapchain);
-
-	// Before InitEngine since there is the allocation over there!
-	m_vbo = MakeSharedPtr<VertexBufferObject>();
-	m_ibo = MakeSharedPtr<IndexBufferObject>();
-
-	m_descriptorSetLayout = MakeSharedPtr<DescriptorSetLayout>(m_device);
-	m_pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, m_descriptorSetLayout);
+	RenderManager::GetInstance().CreateCore(GetSurafe(), GetFrameWidth(), GetFrameHeight(), m_enabledFeatures);
 
 	// here should be custom initialization and also set the render pass
 	InitEngine();
@@ -85,38 +51,23 @@ void EngineApp::InternalInitEngine()
 
 void EngineApp::InternalMainLoop()
 {
-	std::vector<SharedPtr<FrameBuffer>>::size_type count = m_swapchain->GetImageViewsCount();
+	RenderManager::GetInstance().CreateBuffers(GetFrameWidth(), GetFrameHeight(), 1);
 
-	m_frameBuffers.resize(count);
-	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
-	{
-		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetFrameWidth(), GetFrameHeight(), 1);
-		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
-		m_frameBuffers[i]->Create();
-	}
+	RenderManager::GetInstance().CreateFrame();
 
-	m_commandBuffers.resize(count);
-	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < count; ++i)
-	{
-		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-	}
+	RecordCommandBuffers();
 
-	m_frame = MakeSharedPtr<Frame>(m_device, m_swapchain);
+	// This has the main core loop of the game
+	MainLoop();
 
+	RenderManager::GetInstance().WaitIdle();
 
-	MainLoop();		// this has the loop
-
-
-	vkDeviceWaitIdle(m_device->GetDevice());
-
-	m_frame.reset();
+	RenderManager::GetInstance().DestroyFrame();
 }
 
 void EngineApp::BeginFrame()
 {
-	StagingManager::Instance().Flush();
-
-	EFrameStatus status = m_frame->BeginDraw(m_swapchain);
+	EFrameStatus status = RenderManager::GetInstance().BeginFrame();
 	switch (status)
 	{
 	case Arkane::EFrameStatus_Success:
@@ -135,7 +86,7 @@ void EngineApp::BeginFrame()
 
 void EngineApp::EndFrame()
 {
-	EFrameStatus status = m_frame->EndDraw(m_swapchain, m_commandBuffers);
+	EFrameStatus status = RenderManager::GetInstance().EndFrame();
 	switch (status)
 	{
 	case Arkane::EFrameStatus_Success:
@@ -156,123 +107,26 @@ void EngineApp::InternalRecreate()
 {
 	Recreate();
 
-	vkDeviceWaitIdle(m_device->GetDevice());
+	RenderManager::GetInstance().WaitIdle();
 
-
-	//////////////////////////////////////////////////////////////////////////
-	// CLEAN UP
-	m_pipelineLayout.reset();
-	m_descriptorSetLayout.reset();
-
-	m_vbo->FreeBufferObject();
-	m_vbo.reset();
-	m_ibo->FreeBufferObject();
-	m_ibo.reset();
-
-	// I need to manually force the delete because I need this order!
-	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)
-	{
-		m_commandBuffers[i].reset();
-	}
-	m_commandBuffers.clear();
-
-	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_frameBuffers.size(); ++i)
-	{
-		m_frameBuffers[i].reset();
-	}
-	m_frameBuffers.clear();
-
-	m_pipeline.reset();
-	m_pipelineCache.reset();
-	m_renderPass.reset();
-
-	m_commandPool.reset();
-
-	m_swapchain.reset();
-
-	//////////////////////////////////////////////////////////////////////////
-	// RECREATION 
-	m_swapchain = MakeSharedPtr<SwapChain>(m_device, GetSurafe(), GetFrameWidth(), GetFrameHeight());
-
-	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
-
-	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
-	m_pipelineCache = MakeSharedPtr<PipelineCache>(m_device);
-	m_pipeline = MakeSharedPtr<Pipeline>(m_device);
-
-
-	// Before InitEngine since there is the allocation over there!
-	m_vbo = MakeSharedPtr<VertexBufferObject>();
-	m_ibo = MakeSharedPtr<IndexBufferObject>();
-
-	m_descriptorSetLayout = MakeSharedPtr<DescriptorSetLayout>(m_device);
-	m_pipelineLayout = MakeSharedPtr<PipelineLayout>(m_device, m_descriptorSetLayout);
+	RenderManager::GetInstance().RecreateCore(GetSurafe(), GetFrameWidth(), GetFrameHeight());
 
 	InitEngine();
 
-	size_t count = m_swapchain->GetImageViewsCount();
+	RenderManager::GetInstance().RecreateBuffers(GetFrameWidth(), GetFrameHeight(), 1);
 
-	m_frameBuffers.resize(count);
-	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < count; ++i)
-	{
-		m_frameBuffers[i] = MakeSharedPtr<FrameBuffer>(m_device, m_renderPass, GetFrameWidth(), GetFrameHeight(), 1);
-		m_frameBuffers[i]->PushAttachment(m_swapchain->GetImageView(i));
-		m_frameBuffers[i]->Create();
-	}
-
-	m_commandBuffers.resize(count);
-	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < count; ++i)
-	{
-		m_commandBuffers[i] = MakeSharedPtr<CommandBuffer>(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY);
-	}
-
-	m_frame = MakeSharedPtr<Frame>(m_device, m_swapchain);
-
-
-	bool result = RecordCommandBuffers();
-	akAssertReturnVoid(result == true, "Impossible Initialize the engine!");
+	RecordCommandBuffers();
 }
 
 void EngineApp::InternalCleanup()
 {
-	StagingManager::Instance().Shutdown();
-
-	m_pipelineLayout.reset();
-	m_descriptorSetLayout.reset();
-
-	m_vbo->FreeBufferObject();
-	m_vbo.reset();
-	m_ibo->FreeBufferObject();
-	m_ibo.reset();
-
-	// I need to manually force the delete because I need this order!
-	for (std::vector<SharedPtr<CommandBuffer>>::size_type i = 0; i < m_commandBuffers.size(); ++i)
-	{
-		m_commandBuffers[i].reset();
-	}
-	m_commandBuffers.clear();
-
-	for (std::vector<SharedPtr<FrameBuffer>>::size_type i = 0; i < m_frameBuffers.size(); ++i)
-	{
-		m_frameBuffers[i].reset();
-	}
-	m_frameBuffers.clear();
-
-	m_pipeline.reset();
-	m_pipelineCache.reset();
-	m_renderPass.reset();
-
-	m_commandPool.reset();
-
-	m_swapchain.reset();
-
-	VulkanAllocator::Instance().DestroyVMA();
-
-	m_device.reset();
+	RenderManager::GetInstance().DestroyFrame();
+	RenderManager::GetInstance().DestroyBuffers();
+	RenderManager::GetInstance().DestroyCore();
 
 	Cleanup();
 
-	m_instance.reset();
+	RenderManager::GetInstance().DestroyInstance();
 }
 
 AK_NAMESPACE_END

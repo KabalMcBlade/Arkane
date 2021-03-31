@@ -15,7 +15,7 @@ CommandPool::CommandPool(SharedPtr<Device> _device, uint32_t _queueFamilyIndex, 
 	createInfo.queueFamilyIndex = _queueFamilyIndex;
 	createInfo.flags = _flags;
 
-	VkResult result = vkCreateCommandPool(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_commandPool);
+	VkResult result = vkCreateCommandPool(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_commandPool);
 	akAssertReturnVoid(result == VK_SUCCESS, "Cannot create CommandPool");
 }
 
@@ -23,7 +23,7 @@ CommandPool::~CommandPool()
 {
 	if (m_device != VK_NULL_HANDLE && m_commandPool != VK_NULL_HANDLE)
 	{
-		vkDestroyCommandPool(m_device->GetDevice(), m_commandPool, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyCommandPool(m_device->GetDevice(), m_commandPool, VulkanAllocator::GetInstance().GetCallbacks());
 		m_commandPool = VK_NULL_HANDLE;
 	}
 }

@@ -68,7 +68,7 @@ Shader::Shader(SharedPtr<Device> _device, const std::string& _path) : m_device(_
 	createInfo.codeSize = fileSize;
 	createInfo.pCode = reinterpret_cast<const uint32_t*>(binary);
 
-	VkResult result = vkCreateShaderModule(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &m_module);
+	VkResult result = vkCreateShaderModule(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_module);
 
 	delete [] binary;
 
@@ -81,7 +81,7 @@ Shader::~Shader()
 {
 	if (m_device != VK_NULL_HANDLE && m_module != VK_NULL_HANDLE)
 	{
-		vkDestroyShaderModule(m_device->GetDevice(), m_module, VulkanAllocator::Instance().GetCallbacks());
+		vkDestroyShaderModule(m_device->GetDevice(), m_module, VulkanAllocator::GetInstance().GetCallbacks());
 		//m_module = VK_NULL_HANDLE;
 	}
 }

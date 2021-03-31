@@ -45,7 +45,7 @@ struct StagingBuffer
 class AK_DLL StagingManager final
 {
 public:
-	static StagingManager& Instance();
+	static StagingManager& GetInstance();
 
 	bool Init(SharedPtr<Device> _device, SharedPtr<SwapChain> _swapChain, uint32_t _size = AK_MEMORY_64_MB);
 	void Shutdown();

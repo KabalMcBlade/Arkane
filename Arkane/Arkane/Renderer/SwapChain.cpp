@@ -54,12 +54,12 @@ SwapChain::~SwapChain()
 		{
 			for (uint32_t i = 0; i < m_swapChainImageViews.size(); ++i)
 			{
-				vkDestroyImageView(m_device->GetDevice(), m_swapChainImageViews[i], VulkanAllocator::Instance().GetCallbacks());
+				vkDestroyImageView(m_device->GetDevice(), m_swapChainImageViews[i], VulkanAllocator::GetInstance().GetCallbacks());
 			}
 
 			m_swapChainImageViews.clear();
 
-			vkDestroySwapchainKHR(m_device->GetDevice(), m_swapChain, VulkanAllocator::Instance().GetCallbacks());
+			vkDestroySwapchainKHR(m_device->GetDevice(), m_swapChain, VulkanAllocator::GetInstance().GetCallbacks());
 		}
 		m_swapChain = VK_NULL_HANDLE;
 	}
@@ -129,7 +129,7 @@ bool SwapChain::CreateSwapChain()
 	createInfo.oldSwapchain = oldSwapChain;
 
 	VkSwapchainKHR newSwapChain;
-	VkResult result = vkCreateSwapchainKHR(m_device->GetDevice(), &createInfo, VulkanAllocator::Instance().GetCallbacks(), &newSwapChain);
+	VkResult result = vkCreateSwapchainKHR(m_device->GetDevice(), &createInfo, VulkanAllocator::GetInstance().GetCallbacks(), &newSwapChain);
 	akAssertReturnValue(result == VK_SUCCESS, false, "Failed to create swap chain");
 
 	m_swapChain = newSwapChain;
@@ -163,7 +163,7 @@ bool SwapChain::CreateSwapChainImageViews()
 		viewInfo.subresourceRange.layerCount = 1;
 		viewInfo.flags = 0;
 
-		VkResult result = vkCreateImageView(m_device->GetDevice(), &viewInfo, VulkanAllocator::Instance().GetCallbacks(), &m_swapChainImageViews[i]);
+		VkResult result = vkCreateImageView(m_device->GetDevice(), &viewInfo, VulkanAllocator::GetInstance().GetCallbacks(), &m_swapChainImageViews[i]);
 		akAssertReturnValue(result == VK_SUCCESS, false, "Cannot get swap chain image");
 	}
 
