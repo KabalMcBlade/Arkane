@@ -15,7 +15,7 @@
 
 AK_NAMESPACE_BEGIN
 
-enum EFrameStatus
+enum class EFrameStatus
 {
 	EFrameStatus_Success = 0,
 	EFrameStatus_NeedUpdate,

@@ -139,7 +139,7 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEX BUFFER OBJECT
 	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
-	result = RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, Arkane::EBufferUsage::EBufferUsage_Dynamic);
+	result = RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, EBufferUsage::EBufferUsage_Dynamic);
 	akAssertReturnValue(result == true, false, "Cannot allocated Vertex Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
@@ -147,14 +147,14 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE INDEX BUFFER OBJECT
 	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
-	result = RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, Arkane::EBufferUsage::EBufferUsage_Dynamic);
+	result = RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, EBufferUsage::EBufferUsage_Dynamic);
 	akAssertReturnValue(result == true, false, "Cannot allocated Index Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
 
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE DESCRIPTORSETLAYOUT
-	RenderManager::GetInstance().GetDescriptorSetLayout()->Push(Arkane::EDescriptorStage_Vertex, Arkane::EBindingType_Uniform, 0);
+	RenderManager::GetInstance().GetDescriptorSetLayout()->Push(EDescriptorStage::EDescriptorStage_Vertex, EBindingType::EBindingType_Uniform, 0);
 	result = RenderManager::GetInstance().GetDescriptorSetLayout()->Create();
 	akAssertReturnValue(result == true, false, "Cannot create DescriptorSetLayout.");
 	//////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ bool App::CreateGraphicPipeline()
 
 	for (uint32_t i = 0; i < swapChainCount; ++i)
 	{
-		if (RenderManager::GetInstance().GetUBO(i)->AllocBufferObject(&ubo, (uint32_t)sizeUbo, Arkane::EBufferUsage::EBufferUsage_Dynamic))
+		if (RenderManager::GetInstance().GetUBO(i)->AllocBufferObject(&ubo, (uint32_t)sizeUbo, EBufferUsage::EBufferUsage_Dynamic))
 		{
 			RenderManager::GetInstance().GetDescriptorSet(i)->PushLayout(RenderManager::GetInstance().GetDescriptorSetLayout());
 
@@ -260,7 +260,7 @@ void App::UpdateFrame()
 	const size_t align = 16;
 	const size_t mask = align - 1;
 	const size_t sizeUbo = (sizeof(UniformBufferObjectData) + mask) & ~mask;
-	RenderManager::GetInstance().GetUBO(imageIndex)->MapBuffer(Arkane::EBufferMappingType::EBufferMappingType_Write);
+	RenderManager::GetInstance().GetUBO(imageIndex)->MapBuffer(EBufferMappingType::EBufferMappingType_Write);
 	RenderManager::GetInstance().GetUBO(imageIndex)->Update(&ubo, (uint32_t)sizeUbo);
 	RenderManager::GetInstance().GetUBO(imageIndex)->UnmapBuffer();
 }

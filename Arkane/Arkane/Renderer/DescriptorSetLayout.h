@@ -13,14 +13,14 @@
 
 AK_NAMESPACE_BEGIN
 
-enum EBindingType
+enum class EBindingType
 {
 	EBindingType_Uniform,
 	EBindingType_Sampler,
 	EBindingType_Storage
 };
 
-enum EDescriptorStage
+enum class EDescriptorStage
 {
 	EDescriptorStage_Vertex,
 	EDescriptorStage_TessellationControl,

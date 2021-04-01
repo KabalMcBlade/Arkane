@@ -60,7 +60,7 @@ EFrameStatus Frame::BeginDraw(SharedPtr<SwapChain> _swapChain)
 		return EFrameStatus::EFrameStatus_NeedUpdate;
 	}
 
-	return EFrameStatus_Success;
+	return EFrameStatus::EFrameStatus_Success;
 }
 
 EFrameStatus Frame::EndDraw(SharedPtr<SwapChain> _swapChain, std::vector<SharedPtr<CommandBuffer>>& _commandBuffers)
@@ -114,12 +114,12 @@ EFrameStatus Frame::EndDraw(SharedPtr<SwapChain> _swapChain, std::vector<SharedP
 	result = vkQueuePresentKHR(m_device->GetPresentQueue(), &presentInfo);
 	if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
 	{
-		return EFrameStatus_NeedUpdate;
+		return EFrameStatus::EFrameStatus_NeedUpdate;
 	}
 
 	m_currentFrame = (m_currentFrame + 1) % kNumOfFramesInFlight;
 
-	return EFrameStatus_Success;
+	return EFrameStatus::EFrameStatus_Success;
 }
 
 

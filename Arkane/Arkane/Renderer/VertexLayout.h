@@ -26,7 +26,7 @@ AK_NAMESPACE_BEGIN
 // F = Full: Position + Normal + Tex Coordinates 0 + Tangent
 // E = Extended: Position + Normal + Tex Coordinates 0 + Tex Coordinates 1 + Tangent
 // S = Each of the above can have the suffix S which means skinned (weight and joints)
-enum EVertexLayout : uint8_t
+enum class EVertexLayout
 {
 	EVertexLayout_P = 0,
 	EVertexLayout_C,

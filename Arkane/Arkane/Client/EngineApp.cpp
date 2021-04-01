@@ -70,13 +70,13 @@ void EngineApp::BeginFrame()
 	EFrameStatus status = RenderManager::GetInstance().BeginFrame();
 	switch (status)
 	{
-	case Arkane::EFrameStatus_Success:
+	case Arkane::EFrameStatus::EFrameStatus_Success:
 		// OK, keep to show it.
 		break;
-	case Arkane::EFrameStatus_NeedUpdate:
+	case Arkane::EFrameStatus::EFrameStatus_NeedUpdate:
 		InternalRecreate();
 		break;
-	case Arkane::EFrameStatus_Error:
+	case Arkane::EFrameStatus::EFrameStatus_Error:
 		akAssertReturnVoid(false, "Drawing Error!");
 		break;
 	default:
@@ -89,13 +89,13 @@ void EngineApp::EndFrame()
 	EFrameStatus status = RenderManager::GetInstance().EndFrame();
 	switch (status)
 	{
-	case Arkane::EFrameStatus_Success:
+	case Arkane::EFrameStatus::EFrameStatus_Success:
 		// OK, keep to show it.
 		break;
-	case Arkane::EFrameStatus_NeedUpdate:
+	case Arkane::EFrameStatus::EFrameStatus_NeedUpdate:
 		InternalRecreate();
 		break;
-	case Arkane::EFrameStatus_Error:
+	case Arkane::EFrameStatus::EFrameStatus_Error:
 		akAssertReturnVoid(false, "Drawing Error!");
 		break;
 	default:

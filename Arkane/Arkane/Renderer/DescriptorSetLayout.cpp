@@ -13,22 +13,22 @@ VkShaderStageFlags DescriptorSetLayout::ConvertDescriptorStage(EDescriptorStage 
 {
 	switch (_stage)
 	{
-	case Arkane::EDescriptorStage_Vertex:
+	case Arkane::EDescriptorStage::EDescriptorStage_Vertex:
 		return VK_SHADER_STAGE_VERTEX_BIT;
 		break;
-	case Arkane::EDescriptorStage_TessellationControl:
+	case Arkane::EDescriptorStage::EDescriptorStage_TessellationControl:
 		return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
 		break;
-	case Arkane::EDescriptorStage_TessellationEvaluation:
+	case Arkane::EDescriptorStage::EDescriptorStage_TessellationEvaluation:
 		return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
 		break;
-	case Arkane::EDescriptorStage_Geometry:
+	case Arkane::EDescriptorStage::EDescriptorStage_Geometry:
 		return VK_SHADER_STAGE_GEOMETRY_BIT;
 		break;
-	case Arkane::EDescriptorStage_Fragment:
+	case Arkane::EDescriptorStage::EDescriptorStage_Fragment:
 		return VK_SHADER_STAGE_FRAGMENT_BIT;
 		break;
-	case Arkane::EDescriptorStage_Compute:
+	case Arkane::EDescriptorStage::EDescriptorStage_Compute:
 		return VK_SHADER_STAGE_COMPUTE_BIT;
 		break;
 	default:
@@ -42,13 +42,13 @@ VkDescriptorType DescriptorSetLayout::ConvertBindingType(EBindingType _type)
 {
 	switch (_type)
 	{
-	case Arkane::EBindingType_Uniform:
+	case Arkane::EBindingType::EBindingType_Uniform:
 		return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		break;
-	case Arkane::EBindingType_Sampler:
+	case Arkane::EBindingType::EBindingType_Sampler:
 		return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		break;
-	case Arkane::EBindingType_Storage:
+	case Arkane::EBindingType::EBindingType_Storage:
 		return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 		break;
 	default:

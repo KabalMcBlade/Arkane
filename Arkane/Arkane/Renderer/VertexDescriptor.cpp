@@ -19,7 +19,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 
 	switch (_layout)
 	{
-	case Arkane::EVertexLayout_P:
+	case Arkane::EVertexLayout::EVertexLayout_P:
 		binding.stride = sizeof(Vertex_P);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -31,7 +31,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_C:
+	case Arkane::EVertexLayout::EVertexLayout_C:
 		binding.stride = sizeof(Vertex_C);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -50,7 +50,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_N:
+	case Arkane::EVertexLayout::EVertexLayout_N:
 		binding.stride = sizeof(Vertex_N);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -76,7 +76,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_T:
+	case Arkane::EVertexLayout::EVertexLayout_T:
 		binding.stride = sizeof(Vertex_T);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -109,7 +109,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_F:
+	case Arkane::EVertexLayout::EVertexLayout_F:
 		binding.stride = sizeof(Vertex_F);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -142,7 +142,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_E:
+	case Arkane::EVertexLayout::EVertexLayout_E:
 		binding.stride = sizeof(Vertex_E);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -184,7 +184,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 
 		//
 		// SKINNED VERSION OF THE ABOVE
-	case Arkane::EVertexLayout_P_S:
+	case Arkane::EVertexLayout::EVertexLayout_P_S:
 		binding.stride = sizeof(Vertex_P_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -210,7 +210,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_C_S:
+	case Arkane::EVertexLayout::EVertexLayout_C_S:
 		binding.stride = sizeof(Vertex_C_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -243,7 +243,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_N_S:
+	case Arkane::EVertexLayout::EVertexLayout_N_S:
 		binding.stride = sizeof(Vertex_N_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -283,7 +283,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_T_S:
+	case Arkane::EVertexLayout::EVertexLayout_T_S:
 		binding.stride = sizeof(Vertex_T_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -330,7 +330,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_F_S:
+	case Arkane::EVertexLayout::EVertexLayout_F_S:
 		binding.stride = sizeof(Vertex_F_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
@@ -377,7 +377,7 @@ VertexDescriptor::VertexDescriptor(EVertexLayout _layout)
 		m_attributeDescriptions.push_back(attribute);
 		break;
 
-	case Arkane::EVertexLayout_E_S:
+	case Arkane::EVertexLayout::EVertexLayout_E_S:
 		binding.stride = sizeof(Vertex_E_S);
 		binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 		m_bindingDescriptions.push_back(binding);
