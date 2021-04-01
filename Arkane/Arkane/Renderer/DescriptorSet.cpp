@@ -44,41 +44,6 @@ bool DescriptorSet::Create(SharedPtr<DescriptorPool> _descriptorPool)
 	vkUpdateDescriptorSets(m_device->GetDevice(), static_cast<uint32_t>(m_descriptors.size()), m_descriptors.data(), 0, nullptr);
 
 	return true;
-
-
-	/*
-		akAssertReturnValue(m_layouts.size() > 0, false, "DescriptorSet has no layout, please Push at least 1 before create it");
-	akAssertReturnValue(m_descriptors.size() > 0, false, "DescriptorSet has no descriptor, please Push at least 1 before create it");
-
-	const uint32_t count = static_cast<uint32_t>(m_layouts.size());
-
-	VkDescriptorSetAllocateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	createInfo.descriptorPool = _descriptorPool->GetDescritorPool();
-	createInfo.pSetLayouts = m_layouts.data();
-	createInfo.descriptorSetCount = count;
-
-	VkResult result = vkAllocateDescriptorSets(m_device->GetDevice(), &createInfo, &m_descriptorSet);
-
-	for (uint32_t i = 0; i < count; ++i)
-	{
-		VkDescriptorBufferInfo bufferInfo{};
-		bufferInfo.buffer = uniformBuffers[i];
-		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(UniformBufferObject);
-
-		VkWriteDescriptorSet descriptorWrite{};
-		descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		descriptorWrite.dstSet = descriptorSets[i];
-		descriptorWrite.dstBinding = 0;
-		descriptorWrite.dstArrayElement = 0;
-		descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptorWrite.descriptorCount = 1;
-		descriptorWrite.pBufferInfo = &bufferInfo;
-
-		vkUpdateDescriptorSets(m_device->GetDevice(), 1, &descriptorWrite, 0, nullptr);
-	}
-	*/
 }
 
 void DescriptorSet::PushLayout(SharedPtr<DescriptorSetLayout> _layout)
