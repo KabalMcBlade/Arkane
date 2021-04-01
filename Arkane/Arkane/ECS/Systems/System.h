@@ -4,9 +4,11 @@
 #include <set>
 
 
+#pragma warning(disable : 4251)
+
 AK_NAMESPACE_BEGIN
 
-class System
+class AK_DLL System
 {
 public:
 	std::set<Entity> m_entities;

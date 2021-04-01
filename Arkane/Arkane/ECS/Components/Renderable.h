@@ -8,12 +8,16 @@
 #define GLM_FORCE_INTRINSICS
 #include "../../Dependencies/glm/glm/glm.hpp"
 
+#include "../../Renderer/VertexCache.h"
+
 
 AK_NAMESPACE_BEGIN
 
 struct Renderable
 {
-	//glm::vec3 color;
+	glm::mat4 m_model;
+	glm::mat4 m_view;
+	glm::mat4 m_proj;
 };
 
 AK_NAMESPACE_END

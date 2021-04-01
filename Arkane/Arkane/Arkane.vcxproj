@@ -508,6 +508,7 @@
     <ClInclude Include="Renderer\VertexDescriptor.h" />
     <ClInclude Include="Renderer\VertexLayout.h" />
     <ClInclude Include="Renderer\RenderManager.h" />
+    <ClInclude Include="ECS\Systems\RenderSystem.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Shaders\ShaderManager.h" />
     <ClInclude Include="Renderer\StagingManager.h" />
@@ -546,6 +547,7 @@
     <ClCompile Include="Renderer\VertexCache.cpp" />
     <ClCompile Include="Renderer\VertexDescriptor.cpp" />
     <ClCompile Include="Renderer\RenderManager.cpp" />
+    <ClCompile Include="ECS\Systems\RenderSystem.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Shaders\ShaderManager.cpp" />
     <ClCompile Include="Renderer\StagingManager.cpp" />
