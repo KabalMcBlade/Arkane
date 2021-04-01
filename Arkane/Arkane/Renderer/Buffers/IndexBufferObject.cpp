@@ -19,7 +19,7 @@ IndexBufferObject::~IndexBufferObject()
 
 }
 
-bool IndexBufferObject::AllocBufferObject(const void* _data, uint32_t _allocSize, EBufferUsage _usage)
+bool IndexBufferObject::AllocBufferObject(const void* _data, size_t _allocSize, EBufferUsage _usage)
 {
 	akAssertReturnValue(m_object == VK_NULL_HANDLE, false, "BufferObject already allocated");
 	akAssertReturnValue(AK_IS_ALIGNED(_data, 16), false, "Buffer not aligned to 16");
@@ -28,7 +28,7 @@ bool IndexBufferObject::AllocBufferObject(const void* _data, uint32_t _allocSize
 	m_size = _allocSize;
 	m_usage = _usage;
 
-	uint32_t numBytes = GetAllocedSize();
+	size_t numBytes = GetAllocedSize();
 
 	VkBufferCreateInfo bufferCreateInfo = {};
 	bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -108,12 +108,12 @@ void IndexBufferObject::Reference(const IndexBufferObject& _other)
 	akAssertReturnVoid(!OwnsBuffer(), "Should not own this buffer now!");
 }
 
-void IndexBufferObject::Reference(const IndexBufferObject& _other, uint32_t _refOffset, uint32_t _refSize)
+void IndexBufferObject::Reference(const IndexBufferObject& _other, size_t _refOffset, size_t _refSize)
 {
 	akAssertReturnVoid(!IsMapped(), "Buffer must be not mapped");
 	akAssertReturnVoid(_refOffset >= 0, "Offset must be greater or equal to 0");
 	akAssertReturnVoid(_refSize >= 0, "Size must be greater or equal to 0");
-	akAssertReturnVoid(_refOffset + _refSize <= (uint32_t)_other.GetSize(), "Size plus offset must be less or equal to other size");
+	akAssertReturnVoid(_refOffset + _refSize <= (size_t)_other.GetSize(), "Size plus offset must be less or equal to other size");
 
 	FreeBufferObject();
 
@@ -126,12 +126,12 @@ void IndexBufferObject::Reference(const IndexBufferObject& _other, uint32_t _ref
 	akAssertReturnVoid(!OwnsBuffer(), "Should not own this buffer now!");
 }
 
-void IndexBufferObject::Update(const void* _data, uint32_t _size, uint32_t _offset /*= 0*/) const
+void IndexBufferObject::Update(const void* _data, size_t _size, size_t _offset /*= 0*/) const
 {
 	akAssertReturnVoid(m_object != VK_NULL_HANDLE, "BufferObject is not allocated");
 	akAssertReturnVoid(AK_IS_ALIGNED(_data, 16), "Buffer not aligned to 16");
 	akAssertReturnVoid((GetOffset() & 15) == 0, "Offset not aligned to 16");
-	akAssertReturnVoid(_size <= (uint32_t)GetSize(), "Size must be less or equal of the total size");
+	akAssertReturnVoid(_size <= (size_t)GetSize(), "Size must be less or equal of the total size");
 
 	if (m_usage == EBufferUsage::EBufferUsage_Dynamic)
 	{

@@ -39,7 +39,7 @@ class VertexDescriptor;
 class DescriptorPool;
 class DescriptorSet;
 class Shader;
-
+class VertexCache;
 class AK_DLL RenderManager final
 {
 public:
@@ -104,6 +104,7 @@ private:
 	void InternalDetroy();
 
 private:
+	SharedPtr<VertexCache> m_vertexCache;
 	SharedPtr<Instance> m_instance;
 	SharedPtr<Device> m_device;
 	SharedPtr<SwapChain> m_swapchain;

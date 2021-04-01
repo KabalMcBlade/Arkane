@@ -22,6 +22,7 @@
 #include "../Renderer/VertexDescriptor.h"
 #include "../Renderer/DescriptorPool.h"
 #include "../Renderer/DescriptorSet.h"
+#include "../Renderer/VertexCache.h"
 
 #include "../Shaders/Shader.h"
 
@@ -143,6 +144,8 @@ void RenderManager::InternalCreate(const VkSurfaceKHR& _surface, int32_t _frameW
 {
 	m_swapchain = MakeSharedPtr<SwapChain>(m_device, _surface, _frameWidth, _frameHeight);
 
+	m_vertexCache = MakeSharedPtr<VertexCache>(m_device->GetPhysicalDeviceProperties().limits.minUniformBufferOffsetAlignment);
+
 	m_commandPool = MakeSharedPtr<CommandPool>(m_device, (uint32_t)m_device->GetQueueFamily()->GetGraphicsFamily());
 
 	m_renderPass = MakeSharedPtr<RenderPass>(m_device);
@@ -210,6 +213,8 @@ void RenderManager::InternalDetroy()
 	m_renderPass.reset();
 
 	m_commandPool.reset();
+
+	m_vertexCache.reset();
 
 	m_swapchain.reset();
 }
@@ -308,6 +313,9 @@ bool RenderManager::RecordCommandBuffers(uint32_t _indexCount, uint32_t _instanc
 			{
 				return false;
 			}
+
+			// TODO: Need to implement the vbo, ibo and ubo from vertex cache and using this! 
+			//m_vertexCache->Update();
 		}
 	}
 
@@ -316,7 +324,6 @@ bool RenderManager::RecordCommandBuffers(uint32_t _indexCount, uint32_t _instanc
 
 RenderManager::RenderManager()
 {
-	
 }
 
 RenderManager::~RenderManager()

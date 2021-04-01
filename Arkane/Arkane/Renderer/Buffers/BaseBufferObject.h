@@ -38,13 +38,13 @@ public:
 	AK_INLINE bool IsMapped() const { return (m_size & kMappedFlag) != 0; }
 
 protected:
-	void SetMapped() const { const_cast<int32_t&>(m_size) |= kMappedFlag; }
-	void SetUnmapped() const { const_cast<int32_t&>(m_size) &= ~kMappedFlag; }
+	void SetMapped() const { const_cast<size_t&>(m_size) |= kMappedFlag; }
+	void SetUnmapped() const { const_cast<size_t&>(m_size) &= ~kMappedFlag; }
 	bool OwnsBuffer() const { return ((m_offsetInOtherBuffer & kOwnedFlag) != 0); }
 
 protected:
-	int32_t m_size;					// size in bytes
-	int32_t m_offsetInOtherBuffer;	// offset in bytes
+	size_t m_size;					// size in bytes
+	size_t m_offsetInOtherBuffer;	// offset in bytes
 	EBufferUsage m_usage;
 
 	VkBuffer m_object;

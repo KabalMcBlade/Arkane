@@ -139,7 +139,7 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE VERTEX BUFFER OBJECT
 	const size_t sizeVertex = ((_vertices.size() * sizeof(Vertex_C)) + mask) & ~mask;
-	result = RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), (uint32_t)sizeVertex, EBufferUsage::EBufferUsage_Dynamic);
+	result = RenderManager::GetInstance().GetVBO()->AllocBufferObject(_vertices.data(), sizeVertex, EBufferUsage::EBufferUsage_Dynamic);
 	akAssertReturnValue(result == true, false, "Cannot allocated Vertex Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
@@ -147,7 +147,7 @@ bool App::CreateGraphicPipeline()
 	//////////////////////////////////////////////////////////////////////////
 	// CREATE INDEX BUFFER OBJECT
 	const size_t sizeIndex = ((_indices.size() * sizeof(uint16_t)) + mask) & ~mask;
-	result = RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), (uint32_t)sizeIndex, EBufferUsage::EBufferUsage_Dynamic);
+	result = RenderManager::GetInstance().GetIBO()->AllocBufferObject(_indices.data(), sizeIndex, EBufferUsage::EBufferUsage_Dynamic);
 	akAssertReturnValue(result == true, false, "Cannot allocated Index Buffer.");
 	//////////////////////////////////////////////////////////////////////////
 
