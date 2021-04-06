@@ -16,8 +16,6 @@ AK_NAMESPACE_BEGIN
 struct Renderable
 {
 	glm::mat4 m_model;
-	glm::mat4 m_view;
-	glm::mat4 m_proj;
 };
 
 AK_NAMESPACE_END

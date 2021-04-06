@@ -2,6 +2,7 @@
 
 #include "../Core/Defines.h"
 #include "../Utilities/Hash.h"
+#include "../ECS/Core/Types.h"
 
 #include <any>
 #include <unordered_map>
@@ -21,7 +22,8 @@ class Event final
 public:
 	~Event() { }
 
-	explicit Event(EventId _type) : m_type(_type), m_data({}) {}
+	explicit Event(EventId _type) : m_type(_type), m_entity(InvalidEntity), m_data({}) {}
+	explicit Event(EventId _type, Entity _entity) : m_type(_type), m_entity(_entity), m_data({}) {}
 
 	template<typename T>
 	void SetParam(EventId _id, T _value)
@@ -40,11 +42,22 @@ public:
 		return m_type;
 	}
 
+	bool HasSpecificEntity() const
+	{
+		return m_entity != InvalidEntity;
+	}
+
+	Entity GetEntity() const
+	{
+		return m_entity;
+	}
+
 private:
 	Event();
 
 private:
 	EventId m_type;
+	Entity m_entity;
 	std::unordered_map<EventId, std::any> m_data;
 };
 

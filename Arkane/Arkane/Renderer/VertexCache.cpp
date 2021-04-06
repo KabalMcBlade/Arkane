@@ -219,7 +219,7 @@ VertexCacheHandle VertexCache::Alloc(SharedPtr<GeometryBufferSet> _gbs, const vo
 		break;
 	}
 	default:
-		assert(false);
+		akAssertReturnValue(false, (VertexCacheHandle)0, "No valid cache type found.");
 	}
 
 	++_gbs->m_allocations;

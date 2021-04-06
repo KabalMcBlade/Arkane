@@ -13,12 +13,12 @@ AK_NAMESPACE_BEGIN
 
 struct Transform
 {
-// 	glm_vec4 position;
-// 	glm_vec4 rotation;
-// 	glm_vec4 scale;
- 	glm::vec3 position;
-    glm::vec3 rotation;
-    glm::vec3 scale;
+// 	glm_vec4 m_position;
+// 	glm_vec4 m_rotation;
+// 	glm_vec4 m_scale;
+ 	glm::vec3 m_position;
+    glm::vec3 m_rotation;   // radiants - is euler
+    glm::vec3 m_scale;
 };
 
 AK_NAMESPACE_END

@@ -14,9 +14,9 @@ AK_NAMESPACE_BEGIN
 class AK_DLL RenderSystem : public System
 {
 public:
-	void Init();
+	void Initialize();
 	void Update(float _dt);
-	void Destroy();
+	void Shutdown();
 
 private:
 	VertexCacheHandle m_vertexCache;

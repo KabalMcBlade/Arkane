@@ -14,23 +14,38 @@ AK_NAMESPACE_BEGIN
 
 struct Camera
 {
-	float m_width;
-	float m_height;
-	float m_zNearP;
-	float m_zFarP;
+	enum class CameraType { CameraType_LookAt, CameraType_FirstPerson };
+
+
+	glm::mat4 m_view;
+	glm::mat4 m_proj;
+
+	//float m_width;
+	//float m_height;
+	float m_zNearPlane;
+	float m_zFarPlane;
 	float m_fov;
 
-	glm::vec3 m_eye;
-	glm::vec3 m_at;
-	glm::vec3 m_up;
-	glm::mat3x3 m_rotationMatrix;
-	glm::mat4x4 m_view, m_projection, m_viewProjection;
+	//glm::vec3 m_eye;
+	//glm::vec3 m_at;
+	//glm::vec3 m_up;
 
-	Frustum m_frustum;
 
-	glm::mat4x4 m_invView, m_invProjection, m_invViewProjection;
-	glm::vec2 m_jitter;
-	glm::vec4 m_clipPlane;
+	CameraType m_type;
+
+	//glm::mat3 m_rotationMatrix;
+	//glm::mat4 m_viewProjection;
+
+	//Frustum m_frustum;
+
+	//glm::mat4 m_invView, m_invProjection, m_invViewProjection;
+	//glm::vec2 m_jitter;
+	//glm::vec4 m_clipPlane;
+
+	float m_rotationSpeed;
+	float m_movementSpeed;
+
+	bool m_updated;
 };
 
 AK_NAMESPACE_END

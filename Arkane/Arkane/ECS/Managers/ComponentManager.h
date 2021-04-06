@@ -7,6 +7,7 @@
 
 #include "../Core/Types.h"
 #include "../Core/ComponentArray.h"
+#include "../../Utilities/Hash.h"
 
 #include <any>
 #include <memory>
@@ -40,7 +41,7 @@ public:
 		const size_t typeNameSize = strlen(typeName);
 		const uint32_t hash = akHashEx(typeName, typeNameSize);
 
-		assert(m_componentTypes.find(hash) != m_componentTypes.end() && "Component not registered before use.");
+		akAssertInline(m_componentTypes.find(hash) != m_componentTypes.end() && "Component not registered before use.");
 
 		return m_componentTypes[hash];
 	}
@@ -83,10 +84,12 @@ private:
 	SharedPtr<ComponentArray<T>> GetComponentArray()
 	{
 		const char* typeName = typeid(T).name();
+		const size_t typeNameSize = strlen(typeName);
+		const uint32_t hash = akHashEx(typeName, typeNameSize);
 
-		assert(m_componentTypes.find(typeName) != m_componentTypes.end() && "Component not registered before use.");
+		akAssertInline(m_componentTypes.find(hash) != m_componentTypes.end() && "Component not registered before use.");
 
-		return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[typeName]);
+		return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[hash]);
 	}
 };
 

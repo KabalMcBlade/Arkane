@@ -73,6 +73,15 @@
 #define AK_MEMORY_2048_MB		(1u << 31u)
 
 
+#define AK_PI 3.141592653589793238f
+#define AK_HALF_PI 1.5707963267948966192f
+
+#define AK_VALUE_DEGTORAD  0.017453292519943295769236907684886f    // Degrees to Radians (PI/180)
+#define AK_VALUE_RADTODEG  57.295779513082320876798154814105f      // Radians to Degrees (180/PI)
+#define AK_DEG_TO_RAD(x)   (x * AK_VALUE_DEGTORAD)
+#define AK_RAD_TO_DEG(x)   (x * AK_VALUE_RADTODEG)
+
+
 #ifdef max
 #undef max
 #endif
