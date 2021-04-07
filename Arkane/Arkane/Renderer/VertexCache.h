@@ -124,11 +124,13 @@ private:
 	std::vector<SharedPtr<GeometryBufferSet>> m_frameData;
 
 	size_t m_uniformBufferOffsetAlignment;
-
+	
+#ifdef _DEBUG
 	// High water marks for the per-frame buffers
 	uint32_t m_mostUsedVertex;
 	uint32_t m_mostUsedIndex;
 	uint32_t m_mostUsedJoint;
+#endif
 
 	// Try to make room for bytes
 	VertexCacheHandle Alloc(SharedPtr<GeometryBufferSet> _gbs, const void* _data, size_t _bytes, ECacheType _type);

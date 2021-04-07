@@ -84,9 +84,11 @@ void VertexCache::CreateAll()
 	m_currentFrame = 0;
 	m_listNum = 0;
 
+#ifdef _DEBUG
 	m_mostUsedVertex = 0;
 	m_mostUsedIndex = 0;
 	m_mostUsedJoint = 0;
+#endif
 
 	m_frameData.resize(Frame::kNumOfFramesInFlight);
 	for (size_t i = 0; i < Frame::kNumOfFramesInFlight; ++i)
@@ -131,9 +133,11 @@ void VertexCache::PurgeAll()
 void VertexCache::FreeStaticData()
 {
 	ClearGeoBufferSet(m_staticData);
+#ifdef _DEBUG
 	m_mostUsedVertex = 0;
 	m_mostUsedIndex = 0;
 	m_mostUsedJoint = 0;
+#endif
 }
 
 VertexCacheHandle VertexCache::Alloc(SharedPtr<GeometryBufferSet> _gbs, const void* _data, size_t _bytes, ECacheType _type)
