@@ -374,21 +374,20 @@ bool VertexCache::GetJointBuffer(VertexCacheHandle _handle, UniformBufferObject*
 
 void VertexCache::Update()
 {
+#ifdef _DEBUG
 	m_mostUsedVertex = std::max(m_mostUsedVertex, (uint32_t)m_frameData[m_listNum]->m_vertexMemUsed.load());
 	m_mostUsedIndex = std::max(m_mostUsedIndex, (uint32_t)m_frameData[m_listNum]->m_indexMemUsed.load());
 	m_mostUsedJoint = std::max(m_mostUsedJoint, (uint32_t)m_frameData[m_listNum]->m_jointMemUsed.load());
 
-#if 0
-	{
-		printf("%08d: %d m_allocations, %dkB vertex, %dkB index, %kB joint : %dkB vertex, %dkB index, %kB joint\n",
-			m_currentFrame, m_frameData[m_listNum]->m_allocations,
-			m_frameData[m_listNum]->m_vertexMemUsed.load() / 1024,
-			m_frameData[m_listNum]->m_indexMemUsed.load() / 1024,
-			m_frameData[m_listNum]->m_jointMemUsed.load() / 1024,
-			m_mostUsedVertex / 1024,
-			m_mostUsedIndex / 1024,
-			m_mostUsedJoint / 1024);
-	}
+	printf("Frame %08d: %d allocations, %lld kB vertex, %lld kB index, %lld kB joint : %d kB vertex, %d kB index, %d kB joint\n",
+		m_currentFrame,
+		m_frameData[m_listNum]->m_allocations,
+		m_frameData[m_listNum]->m_vertexMemUsed.load() / 1024,
+		m_frameData[m_listNum]->m_indexMemUsed.load() / 1024,
+		m_frameData[m_listNum]->m_jointMemUsed.load() / 1024,
+		m_mostUsedVertex / 1024,
+		m_mostUsedIndex / 1024,
+		m_mostUsedJoint / 1024);
 #endif
 
 	// unmap the current frame so the GPU can read it
